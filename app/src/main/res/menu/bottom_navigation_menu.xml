@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/currentFragment"
+        android:title="Current Weather"
+        android:icon="@drawable/ic_current" />
+    <item android:id="@+id/searchDateFragment"
+        android:title="Search to Date"
+        android:icon="@drawable/ic_search_date"/>
+    <item android:id="@+id/reportfragment"
+        android:title="7-Days Report"
+        android:icon="@drawable/ic_report"/>
+    <item android:id="@+id/settingsFragment"
+        android:title="Settings"
+        android:icon="@drawable/ic_settings"/>
+
+</menu>

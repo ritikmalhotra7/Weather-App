@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="170dp"
+    android:layout_margin="10dp"
+    android:elevation="50dp"
+    app:cardCornerRadius="20dp"
+    android:layout_width="match_parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@color/grey_dark"
+                    android:alpha="0.5"/>
+                <TextView
+                    android:id="@+id/temperature"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="temperature"
+                    android:textColor="@color/white"
+                    app:layout_constraintTop_toTopOf="@id/iv_condition"
+                    android:paddingStart="20dp"
+                    android:textSize="20dp"
+                    android:layout_marginEnd="5dp"
+                    app:layout_constraintStart_toEndOf="@id/iv_condition"/>
+                <TextView
+                    android:id="@+id/windspeed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="windspeed"
+                    android:paddingStart="20dp"
+                    android:textSize="20dp"
+                    android:textColor="@color/white"
+                    android:layout_marginEnd="5dp"
+                    app:layout_constraintTop_toBottomOf="@id/temperature"
+                    app:layout_constraintStart_toEndOf="@id/iv_condition"/>
+                <TextView
+                    android:id="@+id/humidity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="humidity"
+                    android:paddingStart="20dp"
+                    android:textSize="20dp"
+                    android:textColor="@color/white"
+                    android:layout_marginEnd="5dp"
+                    app:layout_constraintTop_toBottomOf="@id/windspeed"
+                    app:layout_constraintStart_toEndOf="@id/iv_condition"/>
+
+                <TextView
+                    android:id="@+id/preasure"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="preasure"
+                    android:textSize="20dp"
+                    android:textColor="@color/white"
+                    app:layout_constraintStart_toEndOf="@id/iv_condition"
+                    app:layout_constraintTop_toBottomOf="@id/humidity"
+                    android:paddingStart="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginEnd="5dp"
+                    />
+                <ImageView
+                    android:id="@+id/iv_condition"
+                    android:layout_width="180dp"
+                    android:layout_height="100dp"
+                    android:layout_margin="5dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/conditioninlocation"
+
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_current"/>
+
+                <TextView
+                    android:id="@+id/conditioninlocation"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Condition in Location"
+                    android:textSize="25dp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:textAllCaps="true"
+                    android:textStyle="bold"
+                    />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
