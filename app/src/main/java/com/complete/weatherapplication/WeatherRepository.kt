@@ -4,6 +4,6 @@ import com.complete.weatherapplication.Api.RetrofitInstance
 import retrofit2.Retrofit
 
 class WeatherRepository {
-    suspend fun getSearched(name :String) = RetrofitInstance.api.getSearchedLocationInfo(name)
-    suspend fun getForecast(lon:String,lat:String,units:String) = RetrofitInstance.api.getForecast(lon,lat,units)
+    suspend fun getSearched(lon :String,lat:String) = RetrofitInstance.api.getSearchedLocationInfo(lon,lat,"metric")
+    suspend fun getForecast(lon:Double,lat:Double) = RetrofitInstance.api.getForecast(lon,lat,"metric")
 }

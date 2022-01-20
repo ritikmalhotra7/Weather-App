@@ -9,7 +9,6 @@
         android:id="@+id/iv_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:backgroundTint="#4CFFFFFF"
         android:scaleType="fitXY"
         android:src="@drawable/img" />
 
@@ -49,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:paddingStart="10dp"
-                android:text="username"
+                android:text="User"
                 android:textSize="30sp"
                 app:layout_constraintStart_toEndOf="@id/welcome"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -59,7 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:text="New Delhi"
+                android:text="Location here"
                 android:textSize="20dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/welcome" />
@@ -73,23 +72,20 @@
                 app:layout_constraintTop_toBottomOf="@id/welcome" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintlayout"
                 android:layout_width="match_parent"
-                android:layout_height="600dp"
+                android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
-                android:elevation="20dp"
-                android:layout_marginBottom="20dp"
                 android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:elevation="20dp"
+                android:paddingBottom="20dp"
+                android:background="@drawable/cardview_bg"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/location">
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/cardview_bg"
-                    android:alpha="0.7"
-                    />
 
                 <TextView
                     android:id="@+id/text1"
@@ -164,42 +160,52 @@
                     android:id="@+id/windspeed"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginVertical="12dp"
                     android:text="WINDSPEED"
                     android:textColor="@color/white"
-                    android:layout_marginVertical="12dp"
-                    android:layout_marginHorizontal="20dp"
                     android:textSize="20dp"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/temperature" />
+
                 <TextView
                     android:id="@+id/humidity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginVertical="12dp"
                     android:text="HUMIDITY"
                     android:textColor="@color/white"
                     android:textSize="20dp"
-                    app:layout_constraintTop_toBottomOf="@id/windspeed"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginVertical="12dp"
-                    android:layout_marginHorizontal="20dp"
-                    />
+                    app:layout_constraintTop_toBottomOf="@id/windspeed" />
+
                 <TextView
                     android:id="@+id/preasure"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginVertical="12dp"
                     android:text="PREASURE"
                     android:textColor="@color/white"
                     android:textSize="20dp"
-                    app:layout_constraintTop_toBottomOf="@id/humidity"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginVertical="12dp"
-                    android:layout_marginHorizontal="20dp"
-                    />
-
+                    app:layout_constraintTop_toBottomOf="@id/humidity" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/see_7day_report"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/location"
+                android:text="see 7-day report >"
+                android:layout_marginVertical="10dp"
+                app:layout_constraintBottom_toTopOf="@id/constraintlayout"
+                app:layout_constraintEnd_toEndOf="@id/constraintlayout"
+                android:layout_marginEnd="20dp"
+                />
 
 
 

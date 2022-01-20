@@ -1,6 +1,6 @@
 package com.complete.weatherapplication.Model2
 
-data class WeatherResponse(
+data class WeatherReportResponse(
     val current: Current,
     val daily: List<Daily>,
     val hourly: List<Hourly>,

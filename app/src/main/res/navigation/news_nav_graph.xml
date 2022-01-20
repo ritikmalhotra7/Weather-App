@@ -9,20 +9,40 @@
         android:id="@+id/currentFragment"
         android:name="com.complete.weatherapplication.ui.CurrentFragment"
         android:label="fragment_current"
-        tools:layout="@layout/fragment_current" />
+        tools:layout="@layout/fragment_current" >
+        <action
+            android:id="@+id/action_currentFragment_to_reportfragment"
+            app:destination="@id/reportfragment" />
+    </fragment>
     <fragment
         android:id="@+id/reportfragment"
         android:name="com.complete.weatherapplication.ui.ReportFragment"
         android:label="fragment_reportfragment"
-        tools:layout="@layout/fragment_report" />
+        tools:layout="@layout/fragment_report" >
+        <action
+            android:id="@+id/action_reportfragment_to_currentFragment"
+            app:destination="@id/currentFragment" />
+        <argument
+            android:name="cityName"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
     <fragment
         android:id="@+id/searchDateFragment"
         android:name="com.complete.weatherapplication.ui.SearchDateFragment"
         android:label="fragment_search_date"
-        tools:layout="@layout/fragment_search_date" />
+        tools:layout="@layout/fragment_search_date" >
+        <action
+            android:id="@+id/action_searchDateFragment_to_currentFragment"
+            app:destination="@id/currentFragment" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.complete.weatherapplication.ui.SettingsFragment"
         android:label="fragment_settings"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_settingsFragment_to_currentFragment"
+            app:destination="@id/currentFragment" />
+    </fragment>
 </navigation>
