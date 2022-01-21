@@ -35,6 +35,7 @@ import android.location.Criteria
 import androidx.navigation.Navigation
 import com.bumptech.glide.Glide
 import com.complete.weatherapplication.Utils.Utils.Companion.BASE_URL
+import java.text.SimpleDateFormat
 
 
 class CurrentFragment : Fragment(R.layout.fragment_current) {
@@ -52,12 +53,15 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
     private var cityName: String? = null
     private var currentLocation : Location? = null
     private lateinit var locationManager: LocationManager
+    var latitude : Double = 28.664934
+    var longitude : Double = 77.142873
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         _binding = FragmentCurrentBinding.inflate(inflater,container,false)
         showProgressBar()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -69,15 +73,19 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
         val repo = WeatherRepository()
         val factory = WeatherViewmodelFactory(repo)
         viewModel = ViewModelProvider(this,factory).get(WeatherViewModel::class.java)
-        viewModel.getSearch(77.142873.toString(),28.664934.toString())
+        getLocation()
+        viewModel.getSearch(77.142873,28.664934)
         observeEverything()
 
         binding.see7dayReport.setOnClickListener {
             Navigation.findNavController(binding.root)
                 .navigate(CurrentFragmentDirections.actionCurrentFragmentToReportfragment(cityName.toString()))
         }
+
+
         return binding.root
     }
+
     private fun hideProgressBar(){
         binding.progressBar.visibility = View.INVISIBLE
     }
@@ -108,40 +116,14 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
                 is Resources.Success ->{
                     hideProgressBar()
                     response.data?.let{
-                        val c = Calendar.getInstance()
-                        val date = c.get(Calendar.DATE)
-                        val month = c.get(Calendar.MONTH)+1
-                        val year = c.get(Calendar.YEAR)
-                        var hour = c.get(Calendar.HOUR_OF_DAY)
-                        val minute = c.get(Calendar.MINUTE)
-                        var timeStamp = ""
-                        var am = "am"
-                        if(minute<10 ){
-                            if(hour == 0){
-                                hour = 12
-                            }
-                            if(hour>12){
-                                hour -= 12
-                                am = "pm"
-                            }
-                            timeStamp = "$hour:0$minute $am"
-                        }else {
-                            if (hour == 0) {
-                                hour = 12
-                            }
-                            if (hour > 12) {
-                                hour -= 12
-                                am = "pm"
-                            }
-                            timeStamp = "$hour:$minute $am"
-                        }
-                        binding.text2.text = "$timeStamp - $date/$month/$year"
-                        Log.d("taget", it.name
-
-                        )
                         binding.location.text = it.name
                         binding.locationName.text = "${it.name},${it.sys.country}"
                         cityName = it.name
+                        val dt = it.dt.toString()
+                        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                        val date  = Date(dt.toLong() * 1000)
+                        sdf.format(date)
+                        binding.text2.text = date.toString()
                         val icon = it.weather[0].icon
                         Glide.with(this).load("https://openweathermap.org/img/wn/$icon@4x.png").into(binding.ivCondition)
                         binding.condition.text = it.weather[0].main
@@ -149,6 +131,8 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
                         binding.windspeed.text = "${it.wind.speed} Meter/Sec"
                         binding.preasure.text = "${it.main.pressure} hPa"
                         binding.temperature.text = "${it.main.temp}°C(${it.main.temp_max} - ${it.main.temp_min})"
+
+                        saveToSharedPrefrences("cityName",cityName.toString())
                     }
                 }
                 is Resources.Error ->{
@@ -162,6 +146,24 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
                 }
             }
         })
+    }
+    fun String.toDate(dateFormat: String = "yyyy-MM-dd HH:mm:ss", timeZone: TimeZone = TimeZone.getTimeZone("UTC")): Date? {
+        val parser  = SimpleDateFormat(dateFormat, Locale.getDefault())
+        parser.timeZone = timeZone
+        return parser.parse(this)
+    }
+
+    fun Date.formatTo(dateFormat: String, timeZone: TimeZone = TimeZone.getDefault()): String {
+        val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
+        formatter.timeZone = timeZone
+        return formatter.format(this)
+    }
+    fun saveToSharedPrefrences(key:String,value:String){
+        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return
+        sharedPref.edit().apply{
+            putString(key,value)
+            commit()
+        }
     }
     fun getLocation(){
         locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -178,10 +180,12 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
         }
 
         if (currentLocation != null) {
-            val lng: Double = currentLocation!!.getLongitude()
-            val lat: Double = currentLocation!!.getLatitude()
-            Log.d("taget",lng.toString())
-            Log.d("taget",lat.toString())
+            longitude = currentLocation!!.getLongitude()
+            latitude = currentLocation!!.getLatitude()
+            saveToSharedPrefrences("latitude",latitude.toString())
+            saveToSharedPrefrences("longitude",longitude.toString())
+            Log.d("taget",longitude.toString())
+            Log.d("taget",latitude.toString())
         }
     }
     override fun onRequestPermissionsResult(

@@ -15,7 +15,7 @@ class WeatherViewModel(val repo:WeatherRepository): ViewModel() {
     var search :MutableLiveData<Resources<WeatherResponse>> = MutableLiveData()
 
 
-    fun getSearch(lon:String,lat:String) = viewModelScope.launch {
+    fun getSearch(lon:Double,lat:Double) = viewModelScope.launch {
         search.postValue(Resources.Loading())
         val searched = repo.getSearched(lon,lat)
         search.postValue(handleWeatherResponse(searched))

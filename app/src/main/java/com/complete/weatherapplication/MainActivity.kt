@@ -37,8 +37,6 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-
         binding.bottomNavigationView.setupWithNavController(
             supportFragmentManager.findFragmentById(R.id.weatherFragment)!!.findNavController())
 
