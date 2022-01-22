@@ -72,7 +72,6 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
                 TODO("Not yet implemented")
             }
 
-
         }
 
         val repo = WeatherRepository()
