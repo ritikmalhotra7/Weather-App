@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY"
-        android:background="@color/grey_light" />
+        android:background="?attr/colorPrimaryVariant" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -39,6 +39,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:text="Welcome"
+                android:textColor="@color/white"
                 android:textSize="30sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -49,6 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:paddingStart="10dp"
+                android:textColor="@color/white"
                 android:text="User"
                 android:textSize="30sp"
                 app:layout_constraintStart_toEndOf="@id/welcome"
@@ -61,12 +63,14 @@
                 android:layout_marginStart="20dp"
                 android:text="Location here"
                 android:textSize="20dp"
+                android:textColor="@color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/welcome" />
 
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:backgroundTint="@color/white"
                 android:layout_marginStart="10dp"
                 android:src="@drawable/ic_location"
                 app:layout_constraintStart_toEndOf="@id/location"
@@ -82,6 +86,7 @@
                 android:background="@drawable/cardview_bg"
                 android:elevation="20dp"
                 android:paddingBottom="20dp"
+                android:outlineAmbientShadowColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -113,16 +118,18 @@
 
                 <ImageView
                     android:id="@+id/iv_condition"
-                    android:layout_width="300dp"
+                    android:layout_width="match_parent"
+                    android:layout_marginHorizontal="30dp"
                     android:layout_height="300dp"
                     android:layout_marginTop="20dp"
-                    android:alpha="0.6"
-                    android:src="@drawable/ic_search_date"
+                    android:alpha="0.5"
+                    android:scaleType="fitXY"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/text2"
                     app:layout_constraintBottom_toTopOf="@id/condition"/>
                 <TextView
+                    android:id="@+id/temperature"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="30°C"
@@ -242,6 +249,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/location"
                 android:text="see 7-day report >"
+                android:textColor="@color/white"
                 android:layout_marginVertical="10dp"
                 app:layout_constraintBottom_toTopOf="@id/constraintlayout"
                 app:layout_constraintEnd_toEndOf="@id/constraintlayout"

@@ -3,6 +3,7 @@ package com.complete.weatherapplication.Api
 import com.complete.weatherapplication.Model.WeatherResponse
 import com.complete.weatherapplication.Model2.Daily
 import com.complete.weatherapplication.Model2.WeatherReportResponse
+import com.complete.weatherapplication.Model3.WeatherPastReponse
 import com.complete.weatherapplication.Utils.Utils.Companion.API_KEY
 import retrofit2.Response
 import retrofit2.http.GET
@@ -29,4 +30,19 @@ interface WeatherApi {
         @Query("appid")
         apikey:String = API_KEY
     ):Response<WeatherReportResponse>
+    @GET("data/2.5/onecall/timemachine")
+    suspend fun getPastCall(
+        @Query("lon")
+        longitude:Double,
+        @Query("lat")
+        latitude:Double,
+        @Query("units")
+        units:String = "default",
+        @Query("dt")
+        dt:Int ,
+        @Query("exclude")
+        exclude:String = "minutely,hourly",
+        @Query("appid")
+        apikey:String = API_KEY
+    ):Response<WeatherPastReponse>
 }

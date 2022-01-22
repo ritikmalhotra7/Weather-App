@@ -9,8 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil.load
+import coil.transform.BlurTransformation
 import com.complete.weatherapplication.Adapters.WeatherReportAdapter
 import com.complete.weatherapplication.Model2.Daily
 import com.complete.weatherapplication.R
@@ -50,7 +53,10 @@ class ReportFragment : Fragment(R.layout.fragment_report) {
         val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
         binding.forlocation.text = sharedPref!!.getString("cityName","")
         setupRecView(list)
-
+        binding.backButton.setOnClickListener {
+            Navigation.findNavController(binding.root)
+                .navigate(R.id.action_reportfragment_to_currentFragment)
+        }
         return binding.root
     }
     private fun hideProgressBar(){
@@ -83,7 +89,7 @@ class ReportFragment : Fragment(R.layout.fragment_report) {
         })
     }
     fun setupRecView(listy:ArrayList<Daily>){
-        rvAdapter = WeatherReportAdapter(listy)
+        rvAdapter = WeatherReportAdapter(listy,requireContext())
         binding.rv.apply {
             adapter = rvAdapter
             layoutManager = LinearLayoutManager(activity)

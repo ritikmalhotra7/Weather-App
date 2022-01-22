@@ -35,16 +35,8 @@ import android.os.Looper
 import android.provider.Settings
 import androidx.core.content.ContextCompat
 import androidx.navigation.Navigation
-import com.bumptech.glide.Glide
 import com.complete.weatherapplication.Utils.Utils.Companion.BASE_URL
 import com.google.android.gms.location.*
-import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
-import com.google.android.gms.tasks.OnSuccessListener
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import java.text.SimpleDateFormat
 import android.location.LocationManager
 
@@ -52,6 +44,7 @@ import com.complete.weatherapplication.MainActivity
 
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.annotation.NonNull
+import coil.load
 import java.text.DateFormat
 
 
@@ -85,8 +78,7 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
         unit = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("unit","metric")
         getCurrentLocation()
         Log.d("taget",longitude.toString()+","+latitude.toString())
-        viewModel.getSearch(longitude!!,latitude!!,unit.toString())
-        observeEverything()
+
         binding.username.text = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("name","")
 
         binding.see7dayReport.setOnClickListener {
@@ -114,12 +106,14 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
                         binding.locationName.text = "${it.name},${it.sys.country}"
                         cityName = it.name
                         val dt = it.dt.toString()
-                        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
                         val date  = Date(dt.toLong() * 1000)
                         sdf.format(date)
                         binding.text2.text = date.toString()
                         val icon = it.weather[0].icon
-                        Glide.with(this).load("https://openweathermap.org/img/wn/$icon@4x.png").into(binding.ivCondition)
+                        binding.ivCondition.load("https://openweathermap.org/img/wn/$icon@4x.png"){
+                            crossfade(true)
+                        }
                         binding.condition.text = it.weather[0].main
                         binding.humidity.text = it.main.humidity.toString()+"%"
                         binding.windspeed.text = "${it.wind.speed} Meter/Sec"
@@ -127,9 +121,12 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
                         if(unit == "metric"){
                             binding.temperaturemax.text = "${it.main.temp_max}°C"
                             binding.temperaturemin.text = "${it.main.temp_min}°C"
+                            val str = it.main.temp.toString().substring(0,2)
+                            binding.temperature.text = "$str°C"
                         }else if(unit == "imperial"){
                             binding.temperaturemax.text = "${it.main.temp_max}°F"
                             binding.temperaturemin.text = "${it.main.temp_min}°F"
+                            binding.temperature.text = "${it.main.temp}°F"
                         }
                         binding.visibility.text = "${it.visibility/1000} KM"
                         saveToSharedPrefs("cityName",cityName.toString())
@@ -149,59 +146,83 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
     }
 
     private fun saveToSharedPrefs(key: String, value: String) {
-        val sh = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)!!.edit().apply{
+        activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)!!.edit().apply{
             putString(key,value)
             apply()
         }
     }
 
     fun getCurrentLocation() {
-        val context = context
-        if (ActivityCompat.checkSelfPermission(
-                context!!,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                context, Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
+        if (ContextCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(),
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+                        ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+                Log.d("taget",true.toString())
+                /*setDefaultLocation()*/
+                updateSharedPreference()
+                getLocationFromSharedPreference()
+
+            } else {
+                ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+                fusedLocationClient!!.lastLocation
+                    .addOnSuccessListener(requireActivity()) { location: Location? ->
+                        location?.let {
+                            latitude = it.latitude
+                            longitude = it.longitude
+                        }
+                        updateSharedPreference()
+                        getLocationFromSharedPreference()
+                    }
+            }
+        }
+        /*if (ActivityCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
         ) {
-            // permission hasn't been granted
+            Log.d("taget",true.toString())
             setDefaultLocation()
             updateSharedPreference()
             getLocationFromSharedPreference()
         } else {
-            // Permission has been granted
             fusedLocationClient!!.lastLocation
                 .addOnSuccessListener(requireActivity()) { location: Location? ->
-                    if (location != null) {
-
-                        // Fetching location using fusedLocationClient
-                        latitude = location.latitude
+                    location.let {
+                        latitude = location!!.latitude
                         longitude = location.longitude
-                        //Toast.makeText(getContext(), latitude+" $ " + longitude, Toast.LENGTH_SHORT).show();
-                        /**If location isn't fetched then set the default latitude and longitude  */
-                        if (latitude == null) {
-                            setDefaultLocation()
-                        }
-
-                        // updating the shared preference with latitude and longitude
-                        updateSharedPreference()
-                    }
+                    }?:setDefaultLocation()
+                    updateSharedPreference()
                     getLocationFromSharedPreference()
                 }
-        }
+        }*/
+        viewModel.getSearch(longitude, latitude,unit.toString())
+        observeEverything()
     }
-
-    /**Function to set the default latitude and longitude */
-    fun setDefaultLocation() {
+   /* override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            1 -> {
+                if (grantResults.isNotEmpty() && grantResults[0] ==
+                    PackageManager.PERMISSION_GRANTED) {
+                    if ((ContextCompat.checkSelfPermission(requireActivity(),
+                            Manifest.permission.ACCESS_FINE_LOCATION) ===
+                                PackageManager.PERMISSION_GRANTED)) {
+                        Toast.makeText(activity, "Permission Granted", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(activity, "Permission Denied", Toast.LENGTH_SHORT).show()
+                }
+                return
+            }
+        }
+    }*/
+   /* fun setDefaultLocation() {
         latitude = 28.667823
         longitude = 77.114950
     }
-
-    /**Function to update the value of latitude & longitude in sharedPreference */
+*/
     fun updateSharedPreference() {
         val editor: SharedPreferences.Editor = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)!!.edit()
         if (latitude == null) {
-            setDefaultLocation()
+            /*setDefaultLocation()*/
         }
         editor.putFloat("latitude", latitude.toFloat())
         editor.putFloat("longitude", longitude.toFloat())
@@ -213,5 +234,28 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
         val defLocation = 0.0
         latitude = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)!!.getFloat("latitude", defLocation.toFloat()).toDouble()
         longitude = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)!!.getFloat("longitude", defLocation.toFloat()).toDouble()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            1 -> {
+                if (grantResults.isNotEmpty() &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if ((ContextCompat.checkSelfPermission(requireActivity(),
+                            Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
+                        Toast.makeText(activity, "Permission Granted", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(activity, "Permission Denied", Toast.LENGTH_SHORT).show()
+                }
+                return
+            }
+        }
+
+
     }
 }

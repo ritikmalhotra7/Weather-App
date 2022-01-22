@@ -9,10 +9,12 @@ import retrofit2.Response
 import com.complete.weatherapplication.Model.WeatherResponse
 import com.complete.weatherapplication.Model2.Daily
 import com.complete.weatherapplication.Model2.WeatherReportResponse
+import com.complete.weatherapplication.Model3.WeatherPastReponse
 
 class WeatherViewModel(val repo:WeatherRepository): ViewModel() {
     val reportList:MutableLiveData<Resources<WeatherReportResponse>> = MutableLiveData()
     var search :MutableLiveData<Resources<WeatherResponse>> = MutableLiveData()
+    var pastValues:MutableLiveData<Resources<WeatherPastReponse>> = MutableLiveData()
 
 
     fun getSearch(lon:Double,lat:Double,unit:String) = viewModelScope.launch {
@@ -34,6 +36,19 @@ class WeatherViewModel(val repo:WeatherRepository): ViewModel() {
         reportList.postValue(handleDailyResponse(reports))
     }
     private fun handleDailyResponse(response: Response<WeatherReportResponse>):Resources<WeatherReportResponse>{
+        if(response.isSuccessful){
+            response.body()?.let{ resultResponse->
+                return Resources.Success(resultResponse)
+            }
+        }
+        return Resources.Error(response.message())
+    }
+    fun getPastReponse(lon:Double,lat:Double,unit:String,date:Int) = viewModelScope.launch {
+        pastValues.postValue(Resources.Loading())
+        val reports = repo.getPastCall(lon,lat,unit,date)
+        pastValues.postValue(handleDailyPastResponse(reports))
+    }
+    private fun handleDailyPastResponse(response: Response<WeatherPastReponse>):Resources<WeatherPastReponse>{
         if(response.isSuccessful){
             response.body()?.let{ resultResponse->
                 return Resources.Success(resultResponse)
