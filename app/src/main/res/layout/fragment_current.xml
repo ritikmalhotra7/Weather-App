@@ -132,7 +132,7 @@
                     android:id="@+id/temperature"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="30°C"
+                    android:text="0°C"
                     android:textStyle="bold"
                     android:textColor="@color/white"
                     app:layout_constraintTop_toTopOf="@id/iv_condition"
@@ -149,6 +149,7 @@
                     android:layout_marginTop="10dp"
                     android:gravity="center_horizontal"
                     android:text="Condition"
+                    android:textStyle="bold"
                     android:textAllCaps="true"
                     android:textColor="@color/white"
                     android:textSize="30dp"
@@ -174,7 +175,7 @@
                     android:layout_marginTop="30dp"
                     android:text="MAX TEMP"
                     android:textColor="@color/white"
-                    android:textSize="20dp"
+                    android:textSize="15dp"
                     app:layout_constraintEnd_toStartOf="@id/temperaturemin"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="parent"
@@ -187,7 +188,7 @@
                     android:layout_marginTop="30dp"
                     android:text="MIN TEMP"
                     android:textColor="@color/white"
-                    android:textSize="20dp"
+                    android:textSize="15dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/location_name" />
 
@@ -199,7 +200,7 @@
                     android:layout_marginVertical="12dp"
                     android:text="WINDSPEED"
                     android:textColor="@color/white"
-                    android:textSize="20dp"
+                    android:textSize="15dp"
                     app:layout_constraintEnd_toStartOf="@id/preasure"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="parent"
@@ -213,7 +214,7 @@
                     android:layout_marginVertical="12dp"
                     android:text="HUMIDITY"
                     android:textColor="@color/white"
-                    android:textSize="20dp"
+                    android:textSize="15dp"
                     app:layout_constraintEnd_toStartOf="@id/visibility"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="parent"
@@ -227,7 +228,7 @@
                     android:layout_marginVertical="12dp"
                     android:text="PREASURE"
                     android:textColor="@color/white"
-                    android:textSize="20dp"
+                    android:textSize="15dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/temperaturemin" />
                 <TextView
@@ -238,7 +239,7 @@
                     android:layout_marginVertical="12dp"
                     android:text="VISIBILITY"
                     android:textColor="@color/white"
-                    android:textSize="20dp"
+                    android:textSize="15dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/preasure" />
 

@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import com.complete.weatherapplication.R
 import com.complete.weatherapplication.databinding.FragmentSearchDateBinding
 import android.widget.Toast
@@ -21,6 +22,9 @@ import com.complete.weatherapplication.Utils.Resources
 import com.complete.weatherapplication.WeatherRepository
 import com.complete.weatherapplication.WeatherViewModel
 import com.complete.weatherapplication.WeatherViewmodelFactory
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
 import java.lang.String
 import java.text.DateFormat
 import java.text.ParseException
@@ -40,50 +44,44 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
     var spinnerPosition = 0
     var daySelected = ""
     var dateSelected = ""
-    private var unit:kotlin.String? = null
+    private var unit = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("unit","metric")
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         _binding = FragmentSearchDateBinding.inflate(inflater,container,false)
+
         binding.username.text = activity?.getSharedPreferences("shared", Context.MODE_PRIVATE)?.getString("name","")
-
-       /* val customList = listOf("New Delhi","Mumbai","Noida")
-        val adapter = ArrayAdapter<String>(requireContext(),R.layout.support_simple_spinner_dropdown_item,customList)
-        binding.spinner.adapter = adapter*/
-        binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                val cityName = parent?.getItemAtPosition(position).toString()
-                Toast.makeText(activity,cityName.toString(),Toast.LENGTH_SHORT).show()
-                Log.d("taget",cityName)
-                spinnerPosition = position
-                binding.locationName.text = cityName+", "+"IN"
-                viewModel.getSearch(longitudeCities[spinnerPosition],latitudeCities[spinnerPosition],unit.toString())
+        binding.calender.setOnDateChangeListener { view1, year, month, dayOfMonth ->
+            val str = Month.of(month + 1).toString() + " " + dayOfMonth + " " + year
+            Log.d("str",str)
+            val df = SimpleDateFormat("MMM dd yyyy")
+            // the day selected in the calendar
+            daySelected = dayOfMonth.toString() + ""
+            Log.d("daySelected",daySelected)
+            var date: Date? = null
+            try {
+                date = df.parse(str)
+                Log.d("date",date.toString())
+            } catch (e: ParseException) {
+                e.printStackTrace()
             }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("Not yet implemented")
-            }
-
+            dateSelected = (date!!.time / 1000L).toString()
+            Log.d("dateSelected",dateSelected)
+            makeAPICall(latitudeCities[spinnerPosition],longitudeCities[spinnerPosition],dateSelected)
         }
-        setViews()
         val repo = WeatherRepository()
         val factory = WeatherViewmodelFactory(repo)
         viewModel = ViewModelProvider(this,factory).get(WeatherViewModel::class.java)
-        unit = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("unit","metric")
-        viewModel.getSearch(longitudeCities[spinnerPosition],latitudeCities[spinnerPosition],unit.toString())
+        setViews()
         observeCurrent()
+
         return binding.root
     }
     fun observeCurrent(){
+        viewModel.getSearch(longitudeCities[spinnerPosition],latitudeCities[spinnerPosition],unit.toString())
         viewModel.search.observe(viewLifecycleOwner, Observer{response->
             when(response){
                 is Resources.Success ->{
@@ -123,13 +121,77 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
             }
         })
     }
-    fun observeForecast(dateDiff:Int){
+    fun makeAPICall(latitude: Double, longitude: Double, date: kotlin.String?) {
+        val calendarNew = Calendar.getInstance()
+        val dNew = calendarNew.time
+        val dateFormatNew: DateFormat = SimpleDateFormat("dd")
+        val daySelected = daySelected.toInt()
+        val dayToday = dateFormatNew.format(dNew).toInt()
+        if (daySelected < dayToday) {
+            getResultFromAPIPastDays(latitude, longitude, date!!)
+        } else {
+            getResultFromAPIFutureDays(latitude, longitude, daySelected - dayToday)
+        }
+    }
+    fun setViews() {
+        var calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_YEAR, 7)
+        val endOfMonth = calendar.timeInMillis
+        calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_YEAR, -4)
+        val startOfMonth = calendar.timeInMillis
+        val c = Calendar.getInstance()
+        val d = c.time
+        val dateFormat: DateFormat = SimpleDateFormat("dd")
+        daySelected = dateFormat.format(d)
+        binding.calender.maxDate = endOfMonth
+        binding.calender.minDate = startOfMonth
+        dateSelected = String.valueOf(binding.calender.date).substring(0, 10)
+
+        binding.calender.setOnDateChangeListener { view1, year, month, dayOfMonth ->
+            val str =
+                Month.of(month + 1).toString() + " " + dayOfMonth + " " + year
+            val df = SimpleDateFormat("MMM dd yyyy")
+            // the day selected in the calendar
+            daySelected = dayOfMonth.toString() + ""
+            var date: Date? = null
+            try {
+                date = df.parse(str)
+            } catch (e: ParseException) {
+                e.printStackTrace()
+            }
+            dateSelected = (date!!.time / 1000L).toString()
+            val latitude = latitudeCities[spinnerPosition]
+            val longitude = longitudeCities[spinnerPosition]
+            makeAPICall(latitude, longitude, dateSelected)
+        }
+        setSpinner()
+    }
+    fun setSpinner() {
+        binding.spinner.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
+                spinnerPosition = position
+                val cityName = parentView?.getItemAtPosition(position).toString()
+                binding.locationName.text = cityName+", "+"IN"
+                makeAPICall(longitudeCities[spinnerPosition],latitudeCities[spinnerPosition],dateSelected)
+            }
+            override fun onNothingSelected(parentView: AdapterView<*>?) {}
+        })
+    }
+    private fun hideProgressBar(){
+        binding.progressBar.visibility = View.INVISIBLE
+    }
+    private fun showProgressBar(){
+        binding.progressBar.visibility = View.VISIBLE
+    }
+    fun getResultFromAPIFutureDays(latitude: Double, longitude: Double, day: Int) {
+        viewModel.getForecast(longitude,latitude,unit.toString())
         viewModel.reportList.observe(viewLifecycleOwner, Observer{ response->
             when(response){
                 is Resources.Success ->{
                     hideProgressBar()
                     response.data.let{
-                        val dateDif = dateDiff
+                        val dateDif = day
                         val icon = it!!.daily[dateDif].weather[0].icon
                         val dt = it.daily[dateDif].dt.toString()
                         val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
@@ -165,7 +227,8 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
             }
         })
     }
-    fun observingPast(){
+    fun getResultFromAPIPastDays(latitude: Double, longitude: Double, date: kotlin.String) {
+        viewModel.getPastReponse(longitude,latitude,unit.toString(),date.toInt())
         viewModel.pastValues.observe(viewLifecycleOwner, Observer{ response->
             when(response){
                 is Resources.Success ->{
@@ -205,66 +268,5 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
             }
         })
     }
-    private fun hideProgressBar(){
-        binding.progressBar.visibility = View.INVISIBLE
-    }
-    private fun showProgressBar(){
-        binding.progressBar.visibility = View.VISIBLE
-    }
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun setViews() {
-        var calendar = Calendar.getInstance()
-        calendar.add(Calendar.DAY_OF_YEAR, 7)
-        val endOfMonth = calendar.timeInMillis
-        calendar = Calendar.getInstance()
-        calendar.add(Calendar.DAY_OF_YEAR, -4)
-        val startOfMonth = calendar.timeInMillis
-        val c = Calendar.getInstance()
-        val d = c.time
-        val dateFormat: DateFormat = SimpleDateFormat("dd")
-        daySelected = dateFormat.format(d)
-        binding.calender.maxDate = endOfMonth
-        binding.calender.minDate = startOfMonth
 
-        binding.calender.setOnDateChangeListener { view1, year, month, dayOfMonth ->
-            setViews()
-            val str =
-                Month.of(month + 1).toString() + " " + dayOfMonth + " " + year
-            val df = SimpleDateFormat("MM dd yyyy")
-            daySelected = dayOfMonth.toString() + ""
-            var date: Date? = null
-            try {
-                date = df.parse(str)
-                Log.d("tagetdate", date.toString())
-            } catch (e: ParseException) {
-                e.printStackTrace()
-            }
-            dateSelected = (date!!.time / 1000L).toString()
-            dateSelected = String.valueOf(binding.calender.date).substring(0, 10)
-            val calendarNew = Calendar.getInstance()
-            val daySelects = daySelected.toInt()
-            val dayToday = calendarNew.get(Calendar.DAY_OF_YEAR)
-
-
-            /*val dNew = calendarNew.time
-            val dateFormatNew: DateFormat = SimpleDateFormat("dd")
-            val daySelects = daySelected.toInt()
-            val dayToday = dateFormatNew.format(dNew).toInt()*/
-            if (daySelects < dayToday) {
-                Log.d("taget",daySelected.toString())
-                Log.d("taget",daySelects.toString())
-                viewModel.getPastReponse(longitudeCities[spinnerPosition], latitudeCities[spinnerPosition], unit.toString(), daySelects!!.toInt())
-                observingPast()
-
-            } else {
-                // the date selected is current date or ahead
-                viewModel.getForecast(
-                    longitudeCities[spinnerPosition],
-                    latitudeCities[spinnerPosition],
-                    unit.toString()
-                )
-                observeForecast(daySelects - dayToday)
-            }
-        }
-        }
 }
