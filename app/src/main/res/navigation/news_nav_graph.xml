@@ -25,7 +25,8 @@
         <argument
             android:name="cityName"
             app:argType="string"
-            app:nullable="true" />
+            app:nullable="true"
+            android:defaultValue="not found" />
     </fragment>
     <fragment
         android:id="@+id/searchDateFragment"

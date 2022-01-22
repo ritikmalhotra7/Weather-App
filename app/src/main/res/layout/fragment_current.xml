@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY"
-        android:src="@drawable/img" />
+        android:background="@color/grey_light" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -44,6 +44,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -78,9 +79,9 @@
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
+                android:background="@drawable/cardview_bg"
                 android:elevation="20dp"
                 android:paddingBottom="20dp"
-                android:background="@drawable/cardview_bg"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -112,13 +113,27 @@
 
                 <ImageView
                     android:id="@+id/iv_condition"
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
+                    android:layout_width="300dp"
+                    android:layout_height="300dp"
                     android:layout_marginTop="20dp"
+                    android:alpha="0.6"
                     android:src="@drawable/ic_search_date"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/text2" />
+                    app:layout_constraintTop_toBottomOf="@id/text2"
+                    app:layout_constraintBottom_toTopOf="@id/condition"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="30°C"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    app:layout_constraintTop_toTopOf="@id/iv_condition"
+                    app:layout_constraintEnd_toEndOf="@id/iv_condition"
+                    app:layout_constraintStart_toStartOf="@id/iv_condition"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_condition"
+                    android:textSize="80dp"
+                    />
 
                 <TextView
                     android:id="@+id/condition"
@@ -145,15 +160,28 @@
                     app:layout_constraintTop_toBottomOf="@id/condition" />
 
                 <TextView
-                    android:id="@+id/temperature"
+                    android:id="@+id/temperaturemax"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginTop="30dp"
-                    android:text="MAX TEMP - MIN TEMP"
+                    android:text="MAX TEMP"
                     android:textColor="@color/white"
                     android:textSize="20dp"
+                    app:layout_constraintEnd_toStartOf="@id/temperaturemin"
+                    app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/location_name" />
+                <TextView
+                    android:id="@+id/temperaturemin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginTop="30dp"
+                    android:text="MIN TEMP"
+                    android:textColor="@color/white"
+                    android:textSize="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/location_name" />
 
                 <TextView
@@ -165,9 +193,10 @@
                     android:text="WINDSPEED"
                     android:textColor="@color/white"
                     android:textSize="20dp"
-                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintEnd_toStartOf="@id/preasure"
+                    app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/temperature" />
+                    app:layout_constraintTop_toBottomOf="@id/temperaturemax" />
 
                 <TextView
                     android:id="@+id/humidity"
@@ -178,6 +207,8 @@
                     android:text="HUMIDITY"
                     android:textColor="@color/white"
                     android:textSize="20dp"
+                    app:layout_constraintEnd_toStartOf="@id/visibility"
+                    app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/windspeed" />
 
@@ -190,9 +221,19 @@
                     android:text="PREASURE"
                     android:textColor="@color/white"
                     android:textSize="20dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/humidity" />
-
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/temperaturemin" />
+                <TextView
+                    android:id="@+id/visibility"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginVertical="12dp"
+                    android:text="VISIBILITY"
+                    android:textColor="@color/white"
+                    android:textSize="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/preasure" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
             <TextView

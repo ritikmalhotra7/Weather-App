@@ -13,6 +13,9 @@ import com.complete.weatherapplication.Model.Weather
 import com.complete.weatherapplication.Model.WeatherResponse
 import com.complete.weatherapplication.Model2.Daily
 import com.complete.weatherapplication.databinding.ReportListBinding
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class WeatherReportAdapter(var list:ArrayList<Daily>): RecyclerView.Adapter<WeatherReportAdapter.AdapterViewHolder>() {
     class AdapterViewHolder(val binding:ReportListBinding) :RecyclerView.ViewHolder(binding.root){
@@ -26,6 +29,13 @@ class WeatherReportAdapter(var list:ArrayList<Daily>): RecyclerView.Adapter<Weat
     override fun onBindViewHolder(holder: AdapterViewHolder, position: Int) {
         val daily = list[position]
         holder.binding.apply {
+            /*val dt = daily.dt.toString()
+            date.text = dt*/
+            val dt = daily.dt.toString()
+            val sdf = SimpleDateFormat("dd-MM-yyyy")
+            val dat  = Date(dt.toLong() * 1000)
+            sdf.format(dat)
+            date.text = dat.toString()
             humidity.text = "${daily.humidity}%"
             preasure.text = "${daily.pressure}hPa"
             temperature.text = "${daily.temp.max}-${daily.temp.min}"

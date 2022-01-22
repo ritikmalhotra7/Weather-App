@@ -15,9 +15,9 @@ class WeatherViewModel(val repo:WeatherRepository): ViewModel() {
     var search :MutableLiveData<Resources<WeatherResponse>> = MutableLiveData()
 
 
-    fun getSearch(lon:String,lat:String) = viewModelScope.launch {
+    fun getSearch(lon:Double,lat:Double,unit:String) = viewModelScope.launch {
         search.postValue(Resources.Loading())
-        val searched = repo.getSearched(lon,lat)
+        val searched = repo.getSearched(lon,lat,unit)
         search.postValue(handleWeatherResponse(searched))
     }
     private fun handleWeatherResponse(response: Response<WeatherResponse>):Resources<com.complete.weatherapplication.Model.WeatherResponse>{
@@ -28,9 +28,9 @@ class WeatherViewModel(val repo:WeatherRepository): ViewModel() {
         }
         return Resources.Error(response.message())
     }
-    fun getForecast(lon:Double,lat:Double) = viewModelScope.launch {
+    fun getForecast(lon:Double,lat:Double,unit:String) = viewModelScope.launch {
         reportList.postValue(Resources.Loading())
-        val reports = repo.getForecast(lon,lat)
+        val reports = repo.getForecast(lon,lat,unit)
         reportList.postValue(handleDailyResponse(reports))
     }
     private fun handleDailyResponse(response: Response<WeatherReportResponse>):Resources<WeatherReportResponse>{

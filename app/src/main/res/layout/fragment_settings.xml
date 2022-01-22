@@ -8,10 +8,134 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_margin="20dp"
-        android:background="@drawable/cardview_bg">
+        android:layout_height="match_parent">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_margin="20dp"
+            android:id="@+id/constraint"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:background="@drawable/cardview_bg">
+
+            <ImageView
+                android:id="@+id/edit"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:layout_constraintHorizontal_bias="0.8"
+                android:scaleType="fitXY"
+                app:layout_constraintBottom_toBottomOf="@id/helloname"
+                app:layout_constraintEnd_toStartOf="@+id/helloname"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/helloname"
+                android:src="@drawable/ic_pencil"/>
+
+            <TextView
+                android:id="@+id/helloname"
+                android:layout_width="match_parent"
+                android:layout_marginHorizontal="50dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Hello Name"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="30dp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            <EditText
+                android:id="@+id/edityourname"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@id/helloname"
+                app:layout_constraintEnd_toEndOf="@id/helloname"
+                app:layout_constraintTop_toTopOf="@id/helloname"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/helloname"/>
+            <ImageView
+                android:id="@+id/tick"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:layout_constraintHorizontal_bias="0.2"
+                android:scaleType="fitXY"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/helloname"
+                app:layout_constraintStart_toEndOf="@id/helloname"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/helloname"
+                android:src="@drawable/ic_tick_box"/>
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hope so you are doing great!"
+                android:textColor="@color/white"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Settings"
+            app:layout_constraintTop_toBottomOf="@id/constraint"
+            android:textSize="30dp"
+            android:textStyle="bold"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="20dp"
+            app:layout_constraintStart_toStartOf="parent"/>
+        <TextView
+            android:id="@+id/control_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-Control unit :"
+            app:layout_constraintTop_toBottomOf="@id/setting"
+            android:textSize="20dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+        <TextView
+            android:id="@+id/c"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/control_unit"
+            app:layout_constraintTop_toTopOf="@id/control_unit"
+            app:layout_constraintBottom_toBottomOf="@id/control_unit"
+            android:layout_marginStart="10dp"
+            android:text="°C"
+            android:hapticFeedbackEnabled="true"
+            android:textSize="20dp"/>
+        <TextView
+            android:id="@+id/slash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/"
+            app:layout_constraintStart_toEndOf="@id/c"
+            android:textSize="20dp"
+            android:layout_marginStart="20dp"
+            app:layout_constraintTop_toTopOf="@id/control_unit"
+            app:layout_constraintBottom_toBottomOf="@id/control_unit"
+            />
+        <TextView
+            android:id="@+id/f"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/slash"
+            app:layout_constraintTop_toTopOf="@id/control_unit"
+            app:layout_constraintBottom_toBottomOf="@id/control_unit"
+            android:layout_marginStart="10dp"
+            android:hapticFeedbackEnabled="true"
+            android:text="°F"
+            android:textSize="20dp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

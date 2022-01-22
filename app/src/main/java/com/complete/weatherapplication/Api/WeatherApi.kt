@@ -11,8 +11,8 @@ import retrofit2.http.Query
 interface WeatherApi {
     @GET("/data/2.5/weather")
     suspend fun getSearchedLocationInfo(
-        @Query("lon") lon: String,
-        @Query("lat") lat: String,
+        @Query("lon") lon: Double,
+        @Query("lat") lat: Double,
         @Query("units") units: String,
         @Query("appid") appid: String = API_KEY
     ): Response<WeatherResponse>

@@ -1,5 +1,6 @@
 package com.complete.weatherapplication.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -28,7 +29,7 @@ class ReportFragment : Fragment(R.layout.fragment_report) {
     private var _binding: FragmentReportBinding? = null
     val binding : FragmentReportBinding get() = _binding!!
 
-    val args:ReportFragmentArgs by navArgs()
+    val args:ReportFragmentArgs? by navArgs()
 
     private lateinit var viewModel:WeatherViewModel
 
@@ -39,12 +40,15 @@ class ReportFragment : Fragment(R.layout.fragment_report) {
     ): View? {
         _binding = FragmentReportBinding.inflate(inflater,container,false)
         list = ArrayList()
+        binding.username.text = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("name","")
         val repo = WeatherRepository()
         val factory = WeatherViewmodelFactory(repo)
         viewModel = ViewModelProvider(this,factory).get(WeatherViewModel::class.java)
-        viewModel.getForecast(77.142873,28.664934)
+        val unit = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("unit","metric")
+        viewModel.getForecast(77.142873,28.664934,unit.toString())
         observing()
-        binding.forlocation.text = args.cityName
+        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+        binding.forlocation.text = sharedPref!!.getString("cityName","")
         setupRecView(list)
 
         return binding.root
@@ -63,10 +67,8 @@ class ReportFragment : Fragment(R.layout.fragment_report) {
                     response.data.let{
                         for(i in it!!.daily){
                             list.add(i)
-                            Log.d("taget",i.toString())
                         }
                         setupRecView(list)
-                        Log.d("taget","success")
 
                     }
                 }
@@ -88,6 +90,10 @@ class ReportFragment : Fragment(R.layout.fragment_report) {
             setHasFixedSize(true)
             rvAdapter.setData(listy)
         }
+    }
 
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 }
