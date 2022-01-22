@@ -47,6 +47,7 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         _binding = FragmentSearchDateBinding.inflate(inflater,container,false)
         binding.username.text = activity?.getSharedPreferences("shared", Context.MODE_PRIVATE)?.getString("name","")
 
