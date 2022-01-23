@@ -19,7 +19,7 @@ import com.complete.weatherapplication.Utils.Resources
 import com.complete.weatherapplication.Utils.Utils
 import com.complete.weatherapplication.Utils.Utils.Companion.SHARED
 import com.complete.weatherapplication.Utils.Utils.Companion.TAG
-import com.complete.weatherapplication.WeatherRepository
+import com.complete.weatherapplication.ui.WeatherRepository
 import com.complete.weatherapplication.ui.WeatherViewModel
 import com.complete.weatherapplication.ui.WeatherViewmodelFactory
 import com.complete.weatherapplication.databinding.FragmentReportBinding

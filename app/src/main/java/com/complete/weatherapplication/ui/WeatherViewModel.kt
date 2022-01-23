@@ -9,7 +9,6 @@ import retrofit2.Response
 import com.complete.weatherapplication.Model.WeatherResponse
 import com.complete.weatherapplication.Model2.WeatherReportResponse
 import com.complete.weatherapplication.Model3.WeatherPastReponse
-import com.complete.weatherapplication.WeatherRepository
 
 class WeatherViewModel(val repo: WeatherRepository): ViewModel() {
     val reportList:MutableLiveData<Resources<WeatherReportResponse>> = MutableLiveData()

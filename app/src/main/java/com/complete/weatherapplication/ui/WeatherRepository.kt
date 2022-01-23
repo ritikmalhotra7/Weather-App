@@ -1,4 +1,4 @@
-package com.complete.weatherapplication
+package com.complete.weatherapplication.ui
 
 import com.complete.weatherapplication.Api.RetrofitInstance
 import retrofit2.Retrofit

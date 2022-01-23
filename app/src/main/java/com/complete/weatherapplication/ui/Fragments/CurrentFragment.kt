@@ -16,7 +16,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.complete.weatherapplication.R
-import com.complete.weatherapplication.WeatherRepository
+import com.complete.weatherapplication.ui.WeatherRepository
 import com.complete.weatherapplication.ui.WeatherViewModel
 import com.complete.weatherapplication.ui.WeatherViewmodelFactory
 import com.complete.weatherapplication.databinding.FragmentCurrentBinding
