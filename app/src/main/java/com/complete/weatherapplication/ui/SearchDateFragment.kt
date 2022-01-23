@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import coil.Coil
 import coil.load
 import com.complete.weatherapplication.Utils.Resources
@@ -25,7 +26,6 @@ import com.complete.weatherapplication.WeatherViewmodelFactory
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import java.lang.String
 import java.text.DateFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -36,11 +36,13 @@ import java.util.*
 
 class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
 
+    private var cityName: String = ""
     private lateinit var  viewModel: WeatherViewModel
     private var _binding: FragmentSearchDateBinding? = null
     val binding : FragmentSearchDateBinding get() = _binding!!
     val latitudeCities = arrayOf(28.7041, 19.0760, 28.5355)
     val longitudeCities = arrayOf(77.1025, 72.8777, 77.3910)
+    val cities = arrayOf("New Delhi","Mumbai","Noida")
     var spinnerPosition = 0
     var daySelected = ""
     var dateSelected = ""
@@ -52,74 +54,21 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentSearchDateBinding.inflate(inflater,container,false)
-
         binding.username.text = activity?.getSharedPreferences("shared", Context.MODE_PRIVATE)?.getString("name","")
-        binding.calender.setOnDateChangeListener { view1, year, month, dayOfMonth ->
-            val str = Month.of(month + 1).toString() + " " + dayOfMonth + " " + year
-            Log.d("str",str)
-            val df = SimpleDateFormat("MMM dd yyyy")
-            // the day selected in the calendar
-            daySelected = dayOfMonth.toString() + ""
-            Log.d("daySelected",daySelected)
-            var date: Date? = null
-            try {
-                date = df.parse(str)
-                Log.d("date",date.toString())
-            } catch (e: ParseException) {
-                e.printStackTrace()
-            }
-            dateSelected = (date!!.time / 1000L).toString()
-            Log.d("dateSelected",dateSelected)
-            makeAPICall(latitudeCities[spinnerPosition],longitudeCities[spinnerPosition],dateSelected)
-        }
         val repo = WeatherRepository()
         val factory = WeatherViewmodelFactory(repo)
         viewModel = ViewModelProvider(this,factory).get(WeatherViewModel::class.java)
+        setSpinner()
         setViews()
-        observeCurrent()
+        makeAPICall(latitudeCities[spinnerPosition],longitudeCities[spinnerPosition],dateSelected)
+        binding.locationName.text = cities[spinnerPosition]
+        binding.backButton.setOnClickListener {
+            Navigation.findNavController(binding.root)
+                .navigate(R.id.action_searchDateFragment_to_currentFragment)
+        }
+
 
         return binding.root
-    }
-    fun observeCurrent(){
-        viewModel.getSearch(longitudeCities[spinnerPosition],latitudeCities[spinnerPosition],unit.toString())
-        viewModel.search.observe(viewLifecycleOwner, Observer{response->
-            when(response){
-                is Resources.Success ->{
-                    hideProgressBar()
-                    response.data?.let{
-                        binding.locationName.text = "${it.name},${it.sys.country}"
-                        val dt = it.dt.toString()
-                        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                        val date  = Date(dt.toLong() * 1000)
-                        sdf.format(date)
-                        binding.text2.text = date.toString()
-                        val icon = it.weather[0].icon
-                        binding.ivCondition.load("https://openweathermap.org/img/wn/$icon@4x.png"){
-                            crossfade(true)
-                        }
-                        binding.condition.text = it.weather[0].main
-                        binding.humidity.text = it.main.humidity.toString()+"%"
-                        binding.windspeed.text = "${it.wind.speed} Meter/Sec"
-                        binding.preasure.text = "${it.main.pressure} hPa"
-                        if(unit == "metric"){
-                            binding.temperature.text = "${it.main.temp}°C"
-                        }else if(unit == "imperial"){
-                            binding.temperature.text = "${it.main.temp}°F"
-                        }
-                        //binding.visibility.text = "${it.visibility/1000} KM"
-                    }
-                }
-                is Resources.Error ->{
-                    hideProgressBar()
-                    response.data?.let{
-                        Toast.makeText(activity,"An Error occured $it",Toast.LENGTH_SHORT).show()
-                    }
-                }
-                is Resources.Loading ->{
-                    showProgressBar()
-                }
-            }
-        })
     }
     fun makeAPICall(latitude: Double, longitude: Double, date: kotlin.String?) {
         val calendarNew = Calendar.getInstance()
@@ -127,6 +76,7 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
         val dateFormatNew: DateFormat = SimpleDateFormat("dd")
         val daySelected = daySelected.toInt()
         val dayToday = dateFormatNew.format(dNew).toInt()
+        Log.d("taget",date.toString())
         if (daySelected < dayToday) {
             getResultFromAPIPastDays(latitude, longitude, date!!)
         } else {
@@ -136,24 +86,34 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
     fun setViews() {
         var calendar = Calendar.getInstance()
         calendar.add(Calendar.DAY_OF_YEAR, 7)
+
         val endOfMonth = calendar.timeInMillis
         calendar = Calendar.getInstance()
         calendar.add(Calendar.DAY_OF_YEAR, -4)
+
         val startOfMonth = calendar.timeInMillis
+
         val c = Calendar.getInstance()
         val d = c.time
         val dateFormat: DateFormat = SimpleDateFormat("dd")
+
         daySelected = dateFormat.format(d)
+
         binding.calender.maxDate = endOfMonth
         binding.calender.minDate = startOfMonth
-        dateSelected = String.valueOf(binding.calender.date).substring(0, 10)
+
+        /**Reason for limiting the date range for the calendar -
+         * Open Weather API only allows the call to be in a
+         * specific range under free plan */
+        dateSelected = binding.calender.date.toString().substring(0, 10)
 
         binding.calender.setOnDateChangeListener { view1, year, month, dayOfMonth ->
-            val str =
-                Month.of(month + 1).toString() + " " + dayOfMonth + " " + year
+            val str = Month.of(month + 1).toString() + " " + dayOfMonth + " " + year
             val df = SimpleDateFormat("MMM dd yyyy")
             // the day selected in the calendar
+            // the day selected in the calendar
             daySelected = dayOfMonth.toString() + ""
+
             var date: Date? = null
             try {
                 date = df.parse(str)
@@ -161,19 +121,25 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
                 e.printStackTrace()
             }
             dateSelected = (date!!.time / 1000L).toString()
-            val latitude = latitudeCities[spinnerPosition]
-            val longitude = longitudeCities[spinnerPosition]
-            makeAPICall(latitude, longitude, dateSelected)
+            // the date selected in the calendar
+            dateSelected = (date!!.time / 1000L).toString()
+            setSpinner()
+
+            Log.d("dateDelected",dateSelected)
+            makeAPICall(latitudeCities[spinnerPosition], longitudeCities[spinnerPosition], dateSelected)
+
         }
         setSpinner()
+
+        makeAPICall(latitudeCities[spinnerPosition], longitudeCities[spinnerPosition], dateSelected)
     }
     fun setSpinner() {
         binding.spinner.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
                 spinnerPosition = position
-                val cityName = parentView?.getItemAtPosition(position).toString()
+                cityName = parentView?.getItemAtPosition(spinnerPosition).toString()
                 binding.locationName.text = cityName+", "+"IN"
-                makeAPICall(longitudeCities[spinnerPosition],latitudeCities[spinnerPosition],dateSelected)
+                setViews()
             }
             override fun onNothingSelected(parentView: AdapterView<*>?) {}
         })
@@ -185,6 +151,9 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
         binding.progressBar.visibility = View.VISIBLE
     }
     fun getResultFromAPIFutureDays(latitude: Double, longitude: Double, day: Int) {
+        unit = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("unit","metric")
+        Log.d("tagetlongi",longitude.toString())
+        Log.d("tagetLati",latitude.toString())
         viewModel.getForecast(longitude,latitude,unit.toString())
         viewModel.reportList.observe(viewLifecycleOwner, Observer{ response->
             when(response){
@@ -208,9 +177,9 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
                         binding.preasure.text = "${it.daily[dateDif].pressure} hPa"
                         val unit = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("unit","metric")
                         if(unit == "metric"){
-                            binding.temperature.text = "(${it.daily[dateDif].temp.max}°C - ${it.daily[dateDif].temp.min}°C)"
+                            binding.temperature.text = "(${it.daily[dateDif].temp.max}°C / ${it.daily[dateDif].temp.min}°C)"
                         }else if(unit == "imperial"){
-                            binding.temperature.text = "(${it.daily[dateDif].temp.max}°F - ${it.daily[dateDif].temp.min}°F)"
+                            binding.temperature.text = "(${it.daily[dateDif].temp.max}°F / ${it.daily[dateDif].temp.min}°F)"
                         }
                         Log.d("taget","${binding.windspeed.text} - windspeed")
                         Log.d("taget",binding.temperature.text.toString())

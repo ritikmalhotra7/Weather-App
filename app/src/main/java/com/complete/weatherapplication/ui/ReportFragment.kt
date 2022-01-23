@@ -32,7 +32,8 @@ class ReportFragment : Fragment(R.layout.fragment_report) {
     private var _binding: FragmentReportBinding? = null
     val binding : FragmentReportBinding get() = _binding!!
 
-    val args:ReportFragmentArgs? by navArgs()
+    var latitude : Double = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("latitude","0.0")?.toDouble()?:0.0
+    var longitude : Double = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("longitude","0.0")?.toDouble()?:0.0
 
     private lateinit var viewModel:WeatherViewModel
 
@@ -43,12 +44,12 @@ class ReportFragment : Fragment(R.layout.fragment_report) {
     ): View? {
         _binding = FragmentReportBinding.inflate(inflater,container,false)
         list = ArrayList()
-        binding.username.text = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("name","")
+        binding.username.text = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("cityname","")
         val repo = WeatherRepository()
         val factory = WeatherViewmodelFactory(repo)
         viewModel = ViewModelProvider(this,factory).get(WeatherViewModel::class.java)
         val unit = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("unit","metric")
-        viewModel.getForecast(77.142873,28.664934,unit.toString())
+        viewModel.getForecast(longitude,latitude,unit.toString())
         observing()
         val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
         binding.forlocation.text = sharedPref!!.getString("cityName","")

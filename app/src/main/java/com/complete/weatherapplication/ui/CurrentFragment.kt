@@ -35,8 +35,8 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
     lateinit var viewModel:WeatherViewModel
     val unit = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("unit","metric")
     private var cityName: String? = null
-    var latitude : Double = /*activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("latitude","0.0")!!.toDouble()*/0.0
-    var longitude : Double = /*activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("longitude","0.0")!!.toDouble()*/0.0
+    var latitude : Double = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("latitude","0.0")?.toDouble()?:0.0
+    var longitude : Double = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("longitude","0.0")?.toDouble()?:0.0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,8 +68,6 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
         binding.progressBar.visibility = View.VISIBLE
     }
     fun getData(latitude : Double, longitude:Double) {
-        Log.d("llll",longitude.toString())
-        Log.d("llll",latitude.toString())
         viewModel.getSearch(longitude,latitude,unit.toString())
         viewModel.search.observe(viewLifecycleOwner, Observer{response->
             when(response){
@@ -104,6 +102,10 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
                             binding.temperature.text = "$str°F"
                         }
                         binding.visibility.text = "Visibility - ${it.visibility/1000} KM"
+                        activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.edit()?.apply {
+                            putString("cityname",cityName)
+                            apply()
+                        }
                     }
                 }
                 is Resources.Error ->{

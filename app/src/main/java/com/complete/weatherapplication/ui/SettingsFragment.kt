@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import com.complete.weatherapplication.R
 import com.complete.weatherapplication.WeatherRepository
 import com.complete.weatherapplication.WeatherViewModel
@@ -45,6 +46,10 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             binding.edit.visibility = View.VISIBLE
             binding.helloname.visibility = View.VISIBLE
             binding.tick.visibility = View.GONE
+        }
+        binding.backbutton.setOnClickListener {
+            Navigation.findNavController(binding.root)
+                .navigate(R.id.action_settingsFragment_to_currentFragment)
         }
         val name = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("name","username")
         binding.helloname.text = name
