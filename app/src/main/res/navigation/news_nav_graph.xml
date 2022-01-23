@@ -30,11 +30,6 @@
             app:exitAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_right"/>
-        <argument
-            android:name="cityName"
-            app:argType="string"
-            app:nullable="true"
-            android:defaultValue="not found" />
     </fragment>
     <fragment
         android:id="@+id/searchDateFragment"
@@ -44,7 +39,7 @@
         <action
             android:id="@+id/action_searchDateFragment_to_currentFragment"
             app:destination="@id/currentFragment"
-            app:enterAnim="@anim/slide_in_right"
+            app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_right"/>
@@ -56,7 +51,8 @@
         tools:layout="@layout/fragment_settings" >
         <action
             android:id="@+id/action_settingsFragment_to_currentFragment"
-            app:enterAnim="@anim/slide_in_right"
+            app:destination="@+id/currentFragment"
+            app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right"
             app:popExitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_right"/>

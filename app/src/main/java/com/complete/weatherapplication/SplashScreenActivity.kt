@@ -7,7 +7,9 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -37,6 +39,15 @@ class SplashScreenActivity : Activity() {
             putString("latitude",latitude.toString())
             apply()
         }
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
+        Handler().postDelayed({
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }, 1000)
     }
 
     fun checkLocationPermission() {
@@ -112,7 +123,6 @@ class SplashScreenActivity : Activity() {
                     latitude = it.latitude
                 }
             }
-            startActivity(Intent(this, MainActivity::class.java))
         }
     }
 }

@@ -44,15 +44,14 @@ class ReportFragment : Fragment(R.layout.fragment_report) {
     ): View? {
         _binding = FragmentReportBinding.inflate(inflater,container,false)
         list = ArrayList()
-        binding.username.text = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("cityname","")
+        binding.username.text = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("name","")
         val repo = WeatherRepository()
         val factory = WeatherViewmodelFactory(repo)
         viewModel = ViewModelProvider(this,factory).get(WeatherViewModel::class.java)
         val unit = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("unit","metric")
         viewModel.getForecast(longitude,latitude,unit.toString())
         observing()
-        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
-        binding.forlocation.text = sharedPref!!.getString("cityName","")
+        binding.forlocation.text = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("cityname","")
         setupRecView(list)
         binding.backButton.setOnClickListener {
             Navigation.findNavController(binding.root)

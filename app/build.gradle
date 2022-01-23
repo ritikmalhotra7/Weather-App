@@ -57,8 +57,6 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$navi_version"
     // Coil
     implementation("io.coil-kt:coil:1.4.0")
-    // Splash Screen
-    implementation 'androidx.core:core-splashscreen:1.0.0-beta01'
     // Easy Permissions
     implementation 'pub.devrel:easypermissions:3.0.0'
 

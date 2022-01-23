@@ -33,10 +33,10 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
     private var _binding:FragmentCurrentBinding? = null
     val binding : FragmentCurrentBinding get() = _binding!!
     lateinit var viewModel:WeatherViewModel
-    val unit = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("unit","metric")
+    var unit = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("unit","metric")
     private var cityName: String? = null
-    var latitude : Double = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("latitude","0.0")?.toDouble()?:0.0
-    var longitude : Double = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("longitude","0.0")?.toDouble()?:0.0
+    var latitude : Double = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("latitude","0.0")?.toDouble()?:28.7041
+    var longitude : Double = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("longitude","0.0")?.toDouble()?:77.1025
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,10 +51,15 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
         binding.username.text = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("name","")
 
         getData(latitude,longitude)
+        binding.swipeToRefresh.setOnRefreshListener {
+            getData(latitude,longitude)
+            Toast.makeText(activity,"refreshed",Toast.LENGTH_SHORT).show()
+            binding.swipeToRefresh.isRefreshing = false
+        }
 
         binding.see7dayReport.setOnClickListener {
             Navigation.findNavController(binding.root)
-                .navigate(CurrentFragmentDirections.actionCurrentFragmentToReportfragment(cityName.toString()))
+                .navigate(R.id.action_currentFragment_to_reportfragment)
         }
 
 
@@ -68,6 +73,7 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
         binding.progressBar.visibility = View.VISIBLE
     }
     fun getData(latitude : Double, longitude:Double) {
+        unit = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("unit","metric")
         viewModel.getSearch(longitude,latitude,unit.toString())
         viewModel.search.observe(viewLifecycleOwner, Observer{response->
             when(response){
@@ -95,10 +101,10 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
                             binding.temperaturemin.text = "Temp(min) - ${it.main.temp_min}°C"
                             val str = it.main.temp.toString().substring(0,2)
                             binding.temperature.text = "$str°C"
-                        }else if(unit == "imperial"){
+                        }else if(unit == "imperial") {
                             binding.temperaturemax.text = "Temp(max) - ${it.main.temp_max}°F"
                             binding.temperaturemin.text = "Temp(min) - ${it.main.temp_min}°F"
-                            val str = it.main.temp.toString().substring(0,2)
+                            val str = it.main.temp.toString().substring(0, 2)
                             binding.temperature.text = "$str°F"
                         }
                         binding.visibility.text = "Visibility - ${it.visibility/1000} KM"

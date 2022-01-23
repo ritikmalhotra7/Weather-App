@@ -40,9 +40,9 @@ class WeatherReportAdapter(var list:ArrayList<Daily>,public val ctx:Context): Re
             conditioninlocation.text = "${daily.weather[0].main}"
             val unit = valueFromKey("unit")
             if(unit == "metric"){
-                temperature.text = "Temp(Max-Min) - ${daily.temp.max}°C - ${daily.temp.min}°C"
+                temperature.text = "Temp(Max-Min) (${daily.temp.max}°C / ${daily.temp.min}°C)"
             }else if(unit == "imperial"){
-                temperature.text = "Temp(Max-Min) - ${daily.temp.max}°F - ${daily.temp.min}°F"
+                temperature.text = "Temp(Max-Min) - (${daily.temp.max}°F / ${daily.temp.min}°F)"
             }
             description.text = "${daily.weather[0].description}"
             ivCondition.load("https://openweathermap.org/img/wn/${daily.weather[0].icon}@4x.png"){
