@@ -1,13 +1,9 @@
-package com.complete.weatherapplication
+package com.complete.weatherapplication.ui.Activities
 
 import android.Manifest
 import android.content.Context
 import android.content.DialogInterface
 import android.content.pm.PackageManager
-import android.location.Address
-import android.location.Geocoder
-import android.location.Location
-import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -18,12 +14,11 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.complete.weatherapplication.R
+import com.complete.weatherapplication.Utils.Utils
+import com.complete.weatherapplication.Utils.Utils.Companion.SHARED
 import com.complete.weatherapplication.databinding.ActivityMainBinding
-import com.complete.weatherapplication.databinding.FragmentCurrentBinding
-import com.complete.weatherapplication.ui.CurrentFragment
 import com.google.android.gms.location.*
-import java.io.IOException
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
@@ -40,11 +35,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         getCurrentLocation()
-        getSharedPreferences("shared", Context.MODE_PRIVATE).edit().apply{
-            putString("longitude",longitude.toString())
-            putString("latitude",latitude.toString())
-            apply()
-        }
+
+        getSharedPreferences(SHARED,Context.MODE_PRIVATE).getString("name","")?.let {
+        } ?: "Username"
+
 
         binding.bottomNavigationView.setupWithNavController(
             supportFragmentManager.findFragmentById(R.id.weatherFragment)!!.findNavController()
@@ -112,9 +106,18 @@ class MainActivity : AppCompatActivity() {
             checkLocationPermission();
         } else {
             fusedLocationClient?.lastLocation?.addOnSuccessListener {
-                it.let {
+                if(it != null && it.longitude != null && it.latitude != null ){
                     longitude = it.longitude
                     latitude = it.latitude
+                    Log.d(Utils.TAG +"2",longitude.toString())
+                    Log.d(Utils.TAG +"2",latitude.toString())
+                    getSharedPreferences(SHARED, Context.MODE_PRIVATE)?.edit()?.apply{
+                        putString("longitude",longitude.toString())
+                        putString("latitude",latitude.toString())
+                        apply()
+                    }
+                }else{
+                    Log.d(Utils.TAG,"else")
                 }
             }
         }

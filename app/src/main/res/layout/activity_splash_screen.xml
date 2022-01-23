@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:attr/colorPrimary"
-    tools:context=".SplashScreenActivity">
+    tools:context=".ui.Activities.SplashScreenActivity">
 
     <TextView
         android:layout_width="wrap_content"
@@ -24,6 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="30dp"
+        android:layout_marginTop="50dp"
         android:src="@drawable/ic_launcher_icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

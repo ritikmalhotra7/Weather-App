@@ -1,4 +1,4 @@
-package com.complete.weatherapplication
+package com.complete.weatherapplication.ui.Activities
 
 import android.Manifest
 import android.app.Activity
@@ -14,6 +14,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.complete.weatherapplication.Utils.Utils.Companion.SHARED
+import com.complete.weatherapplication.Utils.Utils.Companion.TAG
 import com.complete.weatherapplication.databinding.ActivitySplashScreenBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -34,7 +36,7 @@ class SplashScreenActivity : Activity() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         checkLocationPermission()
 
-        getSharedPreferences("shared", Context.MODE_PRIVATE).edit().apply{
+        getSharedPreferences(SHARED, Context.MODE_PRIVATE).edit().apply{
             putString("longitude",longitude.toString())
             putString("latitude",latitude.toString())
             apply()
@@ -118,9 +120,13 @@ class SplashScreenActivity : Activity() {
             checkLocationPermission();
         } else {
             fusedLocationClient?.lastLocation?.addOnSuccessListener {
-                it.let {
+                if(it != null && it.longitude != null && it.latitude != null ){
                     longitude = it.longitude
                     latitude = it.latitude
+                    Log.d(TAG+"1",longitude.toString())
+                    Log.d(TAG+"1",latitude.toString())
+                }else{
+                    Log.d(TAG,"else")
                 }
             }
         }

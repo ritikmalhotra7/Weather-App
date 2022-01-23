@@ -1,7 +1,6 @@
-package com.complete.weatherapplication.ui
+package com.complete.weatherapplication.ui.Fragments
 
 import android.content.Context
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -9,23 +8,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
+import android.widget.Toast
 import com.complete.weatherapplication.R
 import com.complete.weatherapplication.databinding.FragmentSearchDateBinding
-import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
-import coil.Coil
 import coil.load
 import com.complete.weatherapplication.Utils.Resources
+import com.complete.weatherapplication.Utils.Utils.Companion.SHARED
+import com.complete.weatherapplication.Utils.Utils.Companion.TAG
+import com.complete.weatherapplication.Utils.Utils.Companion.isOnline
 import com.complete.weatherapplication.WeatherRepository
-import com.complete.weatherapplication.WeatherViewModel
-import com.complete.weatherapplication.WeatherViewmodelFactory
-import org.json.JSONArray
-import org.json.JSONException
-import org.json.JSONObject
+import com.complete.weatherapplication.ui.WeatherViewModel
+import com.complete.weatherapplication.ui.WeatherViewmodelFactory
 import java.text.DateFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -46,7 +42,7 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
     var spinnerPosition = 0
     var daySelected = ""
     var dateSelected = ""
-    private var unit = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("unit","metric")
+    private var unit = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)?.getString("unit","metric")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,13 +50,17 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentSearchDateBinding.inflate(inflater,container,false)
-        binding.username.text = activity?.getSharedPreferences("shared", Context.MODE_PRIVATE)?.getString("name","")
+        binding.username.text = activity?.getSharedPreferences(SHARED, Context.MODE_PRIVATE)?.getString("name","")
         val repo = WeatherRepository()
         val factory = WeatherViewmodelFactory(repo)
         viewModel = ViewModelProvider(this,factory).get(WeatherViewModel::class.java)
         setSpinner()
         setViews()
-        makeAPICall(latitudeCities[spinnerPosition],longitudeCities[spinnerPosition],dateSelected)
+        if(isOnline(requireActivity())){
+            makeAPICall(latitudeCities[spinnerPosition], longitudeCities[spinnerPosition], dateSelected)
+        }else{
+            Toast.makeText(activity,"No Internet Connection!", Toast.LENGTH_SHORT).show()
+        }
         binding.locationName.text = cities[spinnerPosition]
         binding.backButton.setOnClickListener {
             Navigation.findNavController(binding.root)
@@ -76,7 +76,7 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
         val dateFormatNew: DateFormat = SimpleDateFormat("dd")
         val daySelected = daySelected.toInt()
         val dayToday = dateFormatNew.format(dNew).toInt()
-        Log.d("taget",date.toString())
+        Log.d(TAG,date.toString())
         if (daySelected < dayToday) {
             getResultFromAPIPastDays(latitude, longitude, date!!)
         } else {
@@ -125,8 +125,13 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
             dateSelected = (date!!.time / 1000L).toString()
             setSpinner()
 
-            Log.d("dateDelected",dateSelected)
-            makeAPICall(latitudeCities[spinnerPosition], longitudeCities[spinnerPosition], dateSelected)
+            Log.d(TAG,dateSelected)
+            if(isOnline(requireActivity())){
+                makeAPICall(latitudeCities[spinnerPosition], longitudeCities[spinnerPosition], dateSelected)
+            }else{
+                Toast.makeText(activity,"No Internet Connection!    ", Toast.LENGTH_SHORT).show()
+            }
+
 
         }
         setSpinner()
@@ -151,9 +156,9 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
         binding.progressBar.visibility = View.VISIBLE
     }
     fun getResultFromAPIFutureDays(latitude: Double, longitude: Double, day: Int) {
-        unit = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("unit","metric")
-        Log.d("tagetlongi",longitude.toString())
-        Log.d("tagetLati",latitude.toString())
+        unit = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)?.getString("unit","metric")
+        Log.d(TAG,longitude.toString())
+        Log.d(TAG,latitude.toString())
         viewModel.getForecast(longitude,latitude,unit.toString())
         viewModel.reportList.observe(viewLifecycleOwner, Observer{ response->
             when(response){
@@ -166,29 +171,29 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
                         val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
                         val date  = Date(dt.toLong() * 1000)
                         sdf.format(date)
-                        binding.text2.text = date.toString()
+                        val start = date.toString().substring(0,10)
+                        val end = date.toString().substring(30)
+                        binding.text2.text = start+" "+end
                         binding.condition.text = it.daily[dateDif].weather[0].main
                         binding.ivCondition.load("https://openweathermap.org/img/wn/$icon@4x.png"){
                             crossfade(true)
                         }
                         binding.condition.text = it.daily[dateDif].weather[0].main
-                        binding.humidity.text = it.daily[dateDif].humidity.toString()+"%"
-                        binding.windspeed.text = "${it.daily[dateDif].wind_speed} Meter/Sec"
-                        binding.preasure.text = "${it.daily[dateDif].pressure} hPa"
-                        val unit = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("unit","metric")
+                        binding.humidity.text = "Humidity - "+it.daily[dateDif].humidity.toString()+"%"
+                        binding.windspeed.text = "Windspeed - ${it.daily[dateDif].wind_speed} Meter/Sec"
+                        binding.preasure.text = "Preasure - ${it.daily[dateDif].pressure} hPa"
+                        val unit = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)?.getString("unit","metric")
                         if(unit == "metric"){
-                            binding.temperature.text = "(${it.daily[dateDif].temp.max}°C / ${it.daily[dateDif].temp.min}°C)"
+                            binding.temperature.text = "Temperature - (${it.daily[dateDif].temp.max}°C / ${it.daily[dateDif].temp.min}°C)"
                         }else if(unit == "imperial"){
-                            binding.temperature.text = "(${it.daily[dateDif].temp.max}°F / ${it.daily[dateDif].temp.min}°F)"
+                            binding.temperature.text = "Temperature - (${it.daily[dateDif].temp.max}°F / ${it.daily[dateDif].temp.min}°F)"
                         }
-                        Log.d("taget","${binding.windspeed.text} - windspeed")
-                        Log.d("taget",binding.temperature.text.toString())
 
                     }
                 }
                 is Resources.Error ->{
                     hideProgressBar()
-                    Log.d("taget","error")
+                    Log.d(TAG,"error")
                 }
                 is Resources.Loading ->{
                     showProgressBar()
@@ -208,28 +213,28 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
                         val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
                         val date  = Date(dt.toLong() * 1000)
                         sdf.format(date)
-                        binding.text2.text = date.toString()
+                        val start = date.toString().substring(0,10)
+                        val end = date.toString().substring(30)
+                        binding.text2.text = start +" "+end
                         binding.condition.text = it.current?.weather?.get(0)?.main
                         binding.ivCondition.load("https://openweathermap.org/img/wn/$icon@4x.png"){
                             crossfade(true)
                         }
-                        binding.humidity.text = it.current?.humidity.toString() + "%"
-                        binding.windspeed.text = "${it.current?.wind_speed} Meter/Sec"
-                        binding.preasure.text = "${it.current?.pressure} hPa"
-                        val unit = activity?.getSharedPreferences("shared",Context.MODE_PRIVATE)?.getString("unit","metric")
+                        binding.humidity.text = "Humidity - "+it.current?.humidity.toString() + "%"
+                        binding.windspeed.text = "Windspeed - ${it.current?.wind_speed} Meter/Sec"
+                        binding.preasure.text = "Preasure - ${it.current?.pressure} hPa"
+                        val unit = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)?.getString("unit","metric")
                         if(unit == "metric"){
-                            binding.temperature.text = "${it.current?.temp}°C "
+                            binding.temperature.text = "Temperature - ${it.current?.temp}°C "
                         }else if(unit == "imperial"){
-                            binding.temperature.text = "${it.current?.temp}°F"
+                            binding.temperature.text = "Temperature - ${it.current?.temp}°F"
                         }
-                        Log.d("taget","${binding.windspeed.text} - windspeed")
-                        Log.d("taget",binding.temperature.text.toString())
 
                     }
                 }
                 is Resources.Error ->{
                     hideProgressBar()
-                    Log.d("taget","error")
+                    Log.d(TAG,"error")
                 }
                 is Resources.Loading ->{
                     showProgressBar()

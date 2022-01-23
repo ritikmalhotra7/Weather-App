@@ -1,7 +1,6 @@
 package com.complete.weatherapplication.Api
 
 import com.complete.weatherapplication.Model.WeatherResponse
-import com.complete.weatherapplication.Model2.Daily
 import com.complete.weatherapplication.Model2.WeatherReportResponse
 import com.complete.weatherapplication.Model3.WeatherPastReponse
 import com.complete.weatherapplication.Utils.Utils.Companion.API_KEY

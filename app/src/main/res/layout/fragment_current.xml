@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.CurrentFragment"
+    tools:context=".ui.Fragments.CurrentFragment"
     android:background="?attr/colorPrimaryVariant">
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_to_refresh"
@@ -84,6 +84,7 @@
                     android:layout_marginBottom="20dp"
                     android:background="@drawable/cardview_bg"
                     android:elevation="20dp"
+                    android:paddingHorizontal="5dp"
                     android:paddingBottom="20dp"
                     android:outlineAmbientShadowColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -188,6 +189,7 @@
                         android:text="MIN TEMP"
                         android:textColor="@color/white"
                         android:textSize="15dp"
+                        app:layout_constraintStart_toEndOf="@id/temperaturemax"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/location_name" />
 
@@ -200,24 +202,10 @@
                         android:text="WINDSPEED"
                         android:textColor="@color/white"
                         android:textSize="15dp"
-                        app:layout_constraintEnd_toStartOf="@id/preasure"
+                        app:layout_constraintEnd_toStartOf="@id/humidity"
                         app:layout_constraintHorizontal_bias="0"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/temperaturemax" />
-
-                    <TextView
-                        android:id="@+id/humidity"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="20dp"
-                        android:layout_marginVertical="12dp"
-                        android:text="HUMIDITY"
-                        android:textColor="@color/white"
-                        android:textSize="15dp"
-                        app:layout_constraintEnd_toStartOf="@id/visibility"
-                        app:layout_constraintHorizontal_bias="0"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/windspeed" />
 
                     <TextView
                         android:id="@+id/preasure"
@@ -226,6 +214,21 @@
                         android:layout_marginHorizontal="20dp"
                         android:layout_marginVertical="12dp"
                         android:text="PREASURE"
+                        android:textColor="@color/white"
+                        android:textSize="15dp"
+                        app:layout_constraintEnd_toStartOf="@id/visibility"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/windspeed" />
+
+                    <TextView
+                        android:id="@+id/humidity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginVertical="12dp"
+                        android:text="HUMIDITY"
+                        app:layout_constraintStart_toEndOf="@id/windspeed"
                         android:textColor="@color/white"
                         android:textSize="15dp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -239,8 +242,9 @@
                         android:text="VISIBILITY"
                         android:textColor="@color/white"
                         android:textSize="15dp"
+                        app:layout_constraintStart_toEndOf="@id/preasure"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/preasure" />
+                        app:layout_constraintTop_toBottomOf="@id/humidity" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
                 <TextView
