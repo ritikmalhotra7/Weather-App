@@ -53,19 +53,24 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        //inflating the binding
         _binding = FragmentCurrentBinding.inflate(inflater,container,false)
         showProgressBar()
+        //getting info from shared prefs
         binding.username.text = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)?.getString("name","")
-
+        //creating object for repository
         val repo = WeatherRepository()
+        //creating object for viewModelFactory
         val factory = WeatherViewmodelFactory(repo)
+        //initialising the view model
         viewModel = ViewModelProvider(this,factory).get(WeatherViewModel::class.java)
+        //checking internet connection
         if(isOnline(requireActivity())){
             getData(latitude,longitude)
         }else{
             Toast.makeText(activity,"No Internet Connection!",Toast.LENGTH_SHORT).show()
         }
-
+        //checking on click
         binding.swipeToRefresh.setOnRefreshListener {
             if(isOnline(requireActivity())){
                 getData(latitude,longitude)
@@ -75,21 +80,24 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
             Toast.makeText(activity,"refreshed",Toast.LENGTH_SHORT).show()
             binding.swipeToRefresh.isRefreshing = false
         }
-
+        //checking on click
         binding.see7dayReport.setOnClickListener {
+            //navigating to different fragment
             Navigation.findNavController(binding.root)
                 .navigate(R.id.action_currentFragment_to_reportfragment)
         }
 
         return binding.root
     }
-
+//hide progress bar
     private fun hideProgressBar(){
         binding.progressBar.visibility = View.INVISIBLE
     }
+    //show progress bar
     private fun showProgressBar(){
         binding.progressBar.visibility = View.VISIBLE
     }
+    //getting views from viewmodel
     fun getData(latitude : Double, longitude:Double) {
         unit = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)?.getString("unit","metric")
         viewModel.getSearch(longitude,latitude,unit.toString())
@@ -117,6 +125,7 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
             }
         })
     }
+    //setting up the views from view model
     fun setViews(it : WeatherResponse){
         binding.location.text = it.name
         binding.locationName.text = "${it.name},${it.sys.country}"
@@ -154,6 +163,7 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
             binding.temperature.text = "$str°F"
         }
     }
+    //checking the permissions for location
     fun checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -201,7 +211,7 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
             getCurrentLocation()
         }
     }
-
+//getting the longitude and latitude
     private fun getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
@@ -214,6 +224,7 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
             // permission hasn't been granted
             checkLocationPermission();
         } else {
+            //permission granted
             fusedLocationClient?.lastLocation?.addOnSuccessListener {
                 it.let {
                     longitude = it.longitude
@@ -228,5 +239,10 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
                 }
             }
         }
+    }
+    //null the binding
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 }

@@ -22,14 +22,16 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        //Inflating the binding
         _binding = FragmentSettingsBinding.inflate(inflater,container,false)
-
+        //Checking on Click
         binding.edit.setOnClickListener{
             binding.edityourname.visibility = View.VISIBLE
             binding.tick.visibility = View.VISIBLE
             binding.helloname.visibility = View.INVISIBLE
             binding.edit.visibility = View.GONE
         }
+        //Checking on Click
         binding.tick.setOnClickListener{
             binding.helloname.text = binding.edityourname.text
             val sh = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)
@@ -42,14 +44,14 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             binding.helloname.visibility = View.VISIBLE
             binding.tick.visibility = View.GONE
         }
+        //Checking on Click
         binding.backbutton.setOnClickListener {
             Navigation.findNavController(binding.root)
                 .navigate(R.id.action_settingsFragment_to_currentFragment)
         }
-
         val name = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)?.getString("name","username")
         binding.helloname.text = name
-
+        //Checking on Click
         binding.c.setOnClickListener {
             val sh = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)
             sh!!.edit().apply(){
@@ -58,6 +60,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             }
             Toast.makeText(activity,"unit->°C",Toast.LENGTH_SHORT).show()
         }
+        //Checking on Click
         binding.f.setOnClickListener {
             val sh = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)
             sh!!.edit().apply(){
@@ -66,7 +69,12 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             }
             Toast.makeText(activity,"unit->°F",Toast.LENGTH_SHORT).show()
         }
-
+        //Returning view
         return binding.root
+    }
+    //null the binding
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 }

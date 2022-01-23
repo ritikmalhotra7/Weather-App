@@ -32,8 +32,9 @@ class ReportFragment : Fragment(R.layout.fragment_report) {
     private var _binding: FragmentReportBinding? = null
     val binding : FragmentReportBinding get() = _binding!!
 
-    var latitude : Double = 0.0
-    var longitude : Double = 0.0
+    var latitude : Double = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)?.getString("latitude","0.0")?.toDouble()?:28.6128
+    var longitude : Double = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)?.getString("longitude","0.0")?.toDouble()?:77.2311
+
 
     private lateinit var viewModel: WeatherViewModel
 
@@ -42,23 +43,29 @@ class ReportFragment : Fragment(R.layout.fragment_report) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        //inflating the binding
         _binding = FragmentReportBinding.inflate(inflater,container,false)
+        //creating a empty list
         list = ArrayList()
-        latitude= activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)?.getString("latitude","")?.toDouble()?:0.0
-        longitude = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)?.getString("longitude","")?.toDouble()?:0.0
+        //getting data from shared prefs
         binding.username.text = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)?.getString("name","")
         val unit = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)?.getString("unit","metric")
         binding.forlocation.text = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)?.getString("cityname","")
 
+        //creating object for repository
         val repo = WeatherRepository()
+        //creating object for viewModelFactory
         val factory = WeatherViewmodelFactory(repo)
+        //initialising the view model
         viewModel = ViewModelProvider(this,factory).get(WeatherViewModel::class.java)
+        //Checking Internet connection
         if(Utils.isOnline(requireActivity())){
             viewModel.getForecast(longitude,latitude,unit.toString())
             observing()
         }else{
             Toast.makeText(activity,"No Internet Connection!", Toast.LENGTH_SHORT).show()
         }
+        //check on click
         binding.backButton.setOnClickListener {
             Navigation.findNavController(binding.root)
                 .navigate(R.id.action_reportfragment_to_currentFragment)
@@ -66,12 +73,15 @@ class ReportFragment : Fragment(R.layout.fragment_report) {
 
         return binding.root
     }
+    //hide progress bar
     private fun hideProgressBar(){
         binding.progressbar.visibility = View.INVISIBLE
     }
+    //show progress bar
     private fun showProgressBar(){
         binding.progressbar.visibility = View.VISIBLE
     }
+    //setting view with view model
     fun observing(){
         viewModel.reportList.observe(viewLifecycleOwner,Observer{response->
             when(response){
@@ -94,6 +104,7 @@ class ReportFragment : Fragment(R.layout.fragment_report) {
             }
         })
     }
+    //setting up the recyclerview
     fun setupRecView(listy:ArrayList<Daily>){
         rvAdapter = WeatherReportAdapter(listy,requireContext())
         binding.rv.apply {
@@ -103,7 +114,7 @@ class ReportFragment : Fragment(R.layout.fragment_report) {
             rvAdapter.setData(listy)
         }
     }
-
+    //null the binding
     override fun onDestroy() {
         _binding = null
         super.onDestroy()

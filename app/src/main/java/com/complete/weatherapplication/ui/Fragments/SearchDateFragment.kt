@@ -49,19 +49,25 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        //inflating the binding
         _binding = FragmentSearchDateBinding.inflate(inflater,container,false)
         binding.username.text = activity?.getSharedPreferences(SHARED, Context.MODE_PRIVATE)?.getString("name","")
+        //creating object for repository
         val repo = WeatherRepository()
+        //creating object for viewModelFactory
         val factory = WeatherViewmodelFactory(repo)
+        //initialising the view model
         viewModel = ViewModelProvider(this,factory).get(WeatherViewModel::class.java)
         setSpinner()
         setViews()
+        //checking internet connectivity
         if(isOnline(requireActivity())){
             makeAPICall(latitudeCities[spinnerPosition], longitudeCities[spinnerPosition], dateSelected)
         }else{
             Toast.makeText(activity,"No Internet Connection!", Toast.LENGTH_SHORT).show()
         }
         binding.locationName.text = cities[spinnerPosition]
+        //checking on click
         binding.backButton.setOnClickListener {
             Navigation.findNavController(binding.root)
                 .navigate(R.id.action_searchDateFragment_to_currentFragment)
@@ -70,19 +76,7 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
 
         return binding.root
     }
-    fun makeAPICall(latitude: Double, longitude: Double, date: kotlin.String?) {
-        val calendarNew = Calendar.getInstance()
-        val dNew = calendarNew.time
-        val dateFormatNew: DateFormat = SimpleDateFormat("dd")
-        val daySelected = daySelected.toInt()
-        val dayToday = dateFormatNew.format(dNew).toInt()
-        Log.d(TAG,date.toString())
-        if (daySelected < dayToday) {
-            getResultFromAPIPastDays(latitude, longitude, date!!)
-        } else {
-            getResultFromAPIFutureDays(latitude, longitude, daySelected - dayToday)
-        }
-    }
+    //setting views - viewmodel,calender view, spinner & making api calls
     fun setViews() {
         var calendar = Calendar.getInstance()
         calendar.add(Calendar.DAY_OF_YEAR, 7)
@@ -138,6 +132,21 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
 
         makeAPICall(latitudeCities[spinnerPosition], longitudeCities[spinnerPosition], dateSelected)
     }
+    //this fun selects the api call
+    fun makeAPICall(latitude: Double, longitude: Double, date: kotlin.String?) {
+        val calendarNew = Calendar.getInstance()
+        val dNew = calendarNew.time
+        val dateFormatNew: DateFormat = SimpleDateFormat("dd")
+        val daySelected = daySelected.toInt()
+        val dayToday = dateFormatNew.format(dNew).toInt()
+        Log.d(TAG,date.toString())
+        if (daySelected < dayToday) {
+            getResultFromAPIPastDays(latitude, longitude, date!!)
+        } else {
+            getResultFromAPIFutureDays(latitude, longitude, daySelected - dayToday)
+        }
+    }
+    //setting spinner to work
     fun setSpinner() {
         binding.spinner.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View, position: Int, id: Long) {
@@ -149,12 +158,15 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
             override fun onNothingSelected(parentView: AdapterView<*>?) {}
         })
     }
+    //hide the progress bar
     private fun hideProgressBar(){
         binding.progressBar.visibility = View.INVISIBLE
     }
+    //show the progress bar
     private fun showProgressBar(){
         binding.progressBar.visibility = View.VISIBLE
     }
+    //Getting values from api if user click on any future day
     fun getResultFromAPIFutureDays(latitude: Double, longitude: Double, day: Int) {
         unit = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)?.getString("unit","metric")
         Log.d(TAG,longitude.toString())
@@ -201,6 +213,7 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
             }
         })
     }
+    //Getting values from api if user click on any previous day
     fun getResultFromAPIPastDays(latitude: Double, longitude: Double, date: kotlin.String) {
         viewModel.getPastReponse(longitude,latitude,unit.toString(),date.toInt())
         viewModel.pastValues.observe(viewLifecycleOwner, Observer{ response->
@@ -242,5 +255,9 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
             }
         })
     }
-
+    //Null the binding
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
+    }
 }

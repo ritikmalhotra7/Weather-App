@@ -31,20 +31,22 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //inflating the binding
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        //intialising fusedLocationClient
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         getCurrentLocation()
-
+        //storing in shared prefs
         getSharedPreferences(SHARED,Context.MODE_PRIVATE).getString("name","")?.let {
         } ?: "Username"
 
-
+        //intialising bottom navigation
         binding.bottomNavigationView.setupWithNavController(
             supportFragmentManager.findFragmentById(R.id.weatherFragment)!!.findNavController()
         )
     }
-
+    //checking the permissions for location
     fun checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(
                 applicationContext,
@@ -92,7 +94,7 @@ class MainActivity : AppCompatActivity() {
             getCurrentLocation()
         }
     }
-
+    //getting the longitude and latitude
     private fun getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -105,6 +107,7 @@ class MainActivity : AppCompatActivity() {
             // permission hasn't been granted
             checkLocationPermission();
         } else {
+            //permission granted
             fusedLocationClient?.lastLocation?.addOnSuccessListener {
                 if(it != null && it.longitude != null && it.latitude != null ){
                     longitude = it.longitude
@@ -121,5 +124,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+    //null the binding
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 }

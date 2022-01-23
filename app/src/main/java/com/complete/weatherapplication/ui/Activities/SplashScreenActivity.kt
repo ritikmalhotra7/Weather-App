@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.complete.weatherapplication.Utils.Utils.Companion.REQUEST_CODE
 import com.complete.weatherapplication.Utils.Utils.Companion.SHARED
 import com.complete.weatherapplication.Utils.Utils.Companion.TAG
 import com.complete.weatherapplication.databinding.ActivitySplashScreenBinding
@@ -24,18 +25,20 @@ import com.google.android.gms.location.LocationServices
 class SplashScreenActivity : Activity() {
     private var longitude: Double = 0.0
     private var latitude: Double = 0.0
+
     private var _binding: ActivitySplashScreenBinding? = null
     val binding : ActivitySplashScreenBinding get() = _binding!!
+
     private var fusedLocationClient: FusedLocationProviderClient? = null
-    private var MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 1;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //inflating the binding
         _binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         checkLocationPermission()
-
+        //setting shared prefs for location
         getSharedPreferences(SHARED, Context.MODE_PRIVATE).edit().apply{
             putString("longitude",longitude.toString())
             putString("latitude",latitude.toString())
@@ -45,13 +48,14 @@ class SplashScreenActivity : Activity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
+        //taking delay to splash screen
         Handler().postDelayed({
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
         }, 1000)
     }
-
+    //checking the permissions for location
     fun checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(
                 applicationContext,
@@ -75,7 +79,7 @@ class SplashScreenActivity : Activity() {
                         ActivityCompat.requestPermissions(
                             this,
                             arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                            MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION
+                            REQUEST_CODE
                         )
                         // permission granted
                         fusedLocationClient?.lastLocation?.addOnSuccessListener {
@@ -98,7 +102,7 @@ class SplashScreenActivity : Activity() {
                 // request the permission
                 ActivityCompat.requestPermissions(
                     this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                    MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION
+                    REQUEST_CODE
                 )
 
             }
@@ -106,7 +110,7 @@ class SplashScreenActivity : Activity() {
             getCurrentLocation()
         }
     }
-
+    //getting the longitude and latitude
     private fun getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -130,5 +134,10 @@ class SplashScreenActivity : Activity() {
                 }
             }
         }
+    }
+    //null the binding
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 }
