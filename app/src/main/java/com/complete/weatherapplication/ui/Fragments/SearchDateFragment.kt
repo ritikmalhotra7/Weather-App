@@ -58,13 +58,25 @@ class SearchDateFragment : Fragment(R.layout.fragment_search_date) {
         val factory = WeatherViewmodelFactory(repo)
         //initialising the view model
         viewModel = ViewModelProvider(this,factory).get(WeatherViewModel::class.java)
-        setSpinner()
-        setViews()
+
         //checking internet connectivity
         if(isOnline(requireActivity())){
+            setSpinner()
+            setViews()
             makeAPICall(latitudeCities[spinnerPosition], longitudeCities[spinnerPosition], dateSelected)
         }else{
             Toast.makeText(activity,"No Internet Connection!", Toast.LENGTH_SHORT).show()
+        }
+        binding.swipeToRefresh.setOnRefreshListener {
+            if(isOnline(requireActivity())){
+                setSpinner()
+                setViews()
+                makeAPICall(latitudeCities[spinnerPosition], longitudeCities[spinnerPosition], dateSelected)
+            }else{
+                Toast.makeText(activity,"No Internet Connection!",Toast.LENGTH_SHORT).show()
+            }
+            Toast.makeText(activity,"refreshed",Toast.LENGTH_SHORT).show()
+            binding.swipeToRefresh.isRefreshing = false
         }
         binding.locationName.text = cities[spinnerPosition]
         //checking on click

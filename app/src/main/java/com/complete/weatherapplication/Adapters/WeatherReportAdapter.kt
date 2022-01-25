@@ -42,7 +42,7 @@ class WeatherReportAdapter(var list:ArrayList<Daily>,public val ctx:Context): Re
             conditioninlocation.text = daily.weather[0].main
             val unit = valueFromKey("unit")
             if(unit == "metric"){
-                temperature.text = "Temp(Max-Min) (${daily.temp.max}°C / ${daily.temp.min}°C)"
+                temperature.text = "Temp(Max-Min) - (${daily.temp.max}°C / ${daily.temp.min}°C)"
             }else if(unit == "imperial"){
                 temperature.text = "Temp(Max-Min) - (${daily.temp.max}°F / ${daily.temp.min}°F)"
             }
