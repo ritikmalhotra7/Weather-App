@@ -14,6 +14,7 @@ import com.complete.weatherapplication.databinding.FragmentSearchDateBinding
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import coil.load
 import com.complete.weatherapplication.utils.Resources
 import com.complete.weatherapplication.utils.Utils.Companion.SHARED
 import com.complete.weatherapplication.utils.Utils.Companion.TAG

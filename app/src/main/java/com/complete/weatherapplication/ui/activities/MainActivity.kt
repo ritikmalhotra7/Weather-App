@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat
 
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.setupWithNavController
 import com.complete.weatherapplication.R
 import com.complete.weatherapplication.utils.Utils
 import com.complete.weatherapplication.utils.Utils.Companion.SHARED
@@ -38,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         getCurrentLocation()
         //storing in shared prefs
         getSharedPreferences(SHARED,Context.MODE_PRIVATE).getString("name","Username")?.let {
-        }
+        }?:"abhishek"
 
         //intialising bottom navigation
         binding.bottomNavigationView.setupWithNavController(

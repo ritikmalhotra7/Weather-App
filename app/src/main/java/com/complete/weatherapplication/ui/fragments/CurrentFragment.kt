@@ -24,6 +24,7 @@ import java.util.*
 import androidx.lifecycle.Observer
 import com.complete.weatherapplication.utils.Resources
 import androidx.navigation.Navigation
+import coil.load
 import com.google.android.gms.location.*
 import java.text.SimpleDateFormat
 
@@ -53,7 +54,7 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
         savedInstanceState: Bundle?
     ): View? {
         //inflating the binding
-        _binding = FragmentCurrentBinding.inflate(inflater,container,false)
+        _binding =  FragmentCurrentBinding.inflate(inflater,container,false)
         showProgressBar()
         //getting info from shared prefs
         binding.username.text = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)?.getString("name","")
@@ -100,7 +101,7 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
     fun getData(latitude : Double, longitude:Double) {
         unit = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)?.getString("unit","metric")
         viewModel.getSearch(longitude,latitude,unit.toString())
-        viewModel.search.observe(viewLifecycleOwner, Observer{response->
+        viewModel.search.observe(viewLifecycleOwner, Observer{response ->
             when(response){
                 is Resources.Success ->{
                     hideProgressBar()
@@ -224,7 +225,7 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
             checkLocationPermission();
         } else {
             //permission granted
-            fusedLocationClient?.lastLocation?.addOnSuccessListener {
+            fusedLocationClient?.lastLocation?.addOnSuccessListener {it ->
                 it.let {
                     longitude = it.longitude
                     latitude = it.latitude
