@@ -1,7 +1,6 @@
 package com.complete.weatherapplication.ui
 
-import com.complete.weatherapplication.Api.RetrofitInstance
-import retrofit2.Retrofit
+import com.complete.weatherapplication.api.RetrofitInstance
 
 class WeatherRepository {
     suspend fun getSearched(lon :Double,lat:Double,unit:String) = RetrofitInstance.api.getSearchedLocationInfo(lon,lat,unit)

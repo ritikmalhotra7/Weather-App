@@ -3,15 +3,15 @@ package com.complete.weatherapplication.ui
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.complete.weatherapplication.Utils.Resources
+import com.complete.weatherapplication.utils.Resources
 import kotlinx.coroutines.launch
 import retrofit2.Response
-import com.complete.weatherapplication.Model.WeatherResponse
-import com.complete.weatherapplication.Model2.WeatherReportResponse
-import com.complete.weatherapplication.Model3.WeatherPastReponse
+import com.complete.weatherapplication.model.WeatherResponse
+import com.complete.weatherapplication.model2.WeatherReportResponse
+import com.complete.weatherapplication.model3.WeatherPastReponse
 
 class WeatherViewModel(val repo: WeatherRepository): ViewModel() {
-    val reportList:MutableLiveData<Resources<WeatherReportResponse>> = MutableLiveData()
+    var reportList:MutableLiveData<Resources<WeatherReportResponse>> = MutableLiveData()
     var search :MutableLiveData<Resources<WeatherResponse>> = MutableLiveData()
     var pastValues:MutableLiveData<Resources<WeatherPastReponse>> = MutableLiveData()
 
@@ -21,7 +21,7 @@ class WeatherViewModel(val repo: WeatherRepository): ViewModel() {
         val searched = repo.getSearched(lon,lat,unit)
         search.postValue(handleWeatherResponse(searched))
     }
-    private fun handleWeatherResponse(response: Response<WeatherResponse>):Resources<com.complete.weatherapplication.Model.WeatherResponse>{
+    private fun handleWeatherResponse(response: Response<WeatherResponse>):Resources<com.complete.weatherapplication.model.WeatherResponse>{
         if(response.isSuccessful){
             response.body()?.let{ resultResponse->
                 return Resources.Success(resultResponse)
