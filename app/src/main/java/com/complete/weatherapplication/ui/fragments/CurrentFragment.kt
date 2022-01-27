@@ -38,7 +38,6 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
 
     private val REQUEST_CODE: Int = 1
     private var fusedLocationClient: FusedLocationProviderClient? = null
-    private var provider: String? = null
 
     private var _binding:FragmentCurrentBinding? = null
     val binding : FragmentCurrentBinding get() = _binding!!

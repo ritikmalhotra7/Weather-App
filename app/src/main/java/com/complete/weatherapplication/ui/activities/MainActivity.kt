@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         getCurrentLocation()
         //storing in shared prefs
         getSharedPreferences(SHARED,Context.MODE_PRIVATE).getString("name","Username")?.let {
-        }?:"abhishek"
+        }
 
         //intialising bottom navigation
         binding.bottomNavigationView.setupWithNavController(

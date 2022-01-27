@@ -27,7 +27,8 @@ class SplashScreenActivity : Activity() {
     private var latitude: Double = 0.0
 
     private var _binding: ActivitySplashScreenBinding? = null
-    val binding : ActivitySplashScreenBinding get() = _binding!!
+    val binding : ActivitySplashScreenBinding
+    get() = _binding!!
 
     private var fusedLocationClient: FusedLocationProviderClient? = null
 
