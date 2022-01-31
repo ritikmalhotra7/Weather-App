@@ -12,7 +12,7 @@
 
 ## 🧐 About <a name = "about"></a>
 
-Weather Application made using Java and Volley.
+Weather Application made using Kotlin, Retrofit, MVVM
 
 Features -
 - Fetches Weather of the current location
