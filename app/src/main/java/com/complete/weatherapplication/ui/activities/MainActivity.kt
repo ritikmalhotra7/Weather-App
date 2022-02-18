@@ -22,11 +22,11 @@ import com.google.android.gms.location.*
 
 class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
-    val binding : ActivityMainBinding get() = _binding!!
+    private val binding : ActivityMainBinding get() = _binding!!
     private var longitude: Double = 0.0
     private var latitude: Double = 0.0
 
-    private var MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 1;
+    private var MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 1
     private var fusedLocationClient: FusedLocationProviderClient? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         )
     }
     //checking the permissions for location
-    fun checkLocationPermission() {
+    private fun checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(
                 applicationContext,
                 android.Manifest.permission.ACCESS_FINE_LOCATION

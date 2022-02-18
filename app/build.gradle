@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id "androidx.navigation.safeargs.kotlin"
+    id 'kotlin-kapt'
 }
 
 android {
@@ -48,12 +49,14 @@ dependencies {
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
-    implementation "com.squareup.okhttp3:logging-interceptor:4.5.0"
+    implementation "com.squareup.okhttp3:logging-interceptor:4.9.0"
     // Navigation Components
     implementation "androidx.navigation:navigation-fragment-ktx:$navi_version"
     implementation "androidx.navigation:navigation-ui-ktx:$navi_version"
     // Coil
     implementation("io.coil-kt:coil:1.4.0")
+    // Activity KTX for viewModels()
+    implementation "androidx.activity:activity-ktx:1.4.0"
 
 
 }
