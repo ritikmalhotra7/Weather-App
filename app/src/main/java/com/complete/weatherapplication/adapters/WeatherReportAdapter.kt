@@ -54,7 +54,7 @@ class WeatherReportAdapter(var list:ArrayList<Daily>, val ctx:Context): Recycler
 
    private fun valueFromKey(key: String): String? {
         return this.ctx.getSharedPreferences(SHARED,Context.MODE_PRIVATE)!!.getString(key,"")
-    }
+   }
 
     fun setData(newList:ArrayList<Daily>){
         val diffUtil = WeatherDiffUtils(list,newList)

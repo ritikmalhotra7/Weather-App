@@ -44,8 +44,8 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
     lateinit var viewModel: WeatherViewModel
     var unit = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)?.getString("unit","metric")
     private var cityName: String? = null
-    var latitude : Double = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)?.getString("latitude","0.0")?.toDouble()?:28.6128
-    var longitude : Double = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)?.getString("longitude","0.0")?.toDouble()?:77.2311
+    var latitude  = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)?.getString("latitude","0.0")
+    var longitude  = activity?.getSharedPreferences(SHARED,Context.MODE_PRIVATE)?.getString("longitude","0.0")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,14 +65,15 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
         viewModel = ViewModelProvider(this,factory).get(WeatherViewModel::class.java)
         //checking internet connection
         if(isOnline(requireActivity())){
-            getData(latitude,longitude)
+            getData(latitude!!.toDouble(),longitude!!.toDouble())
         }else{
             Toast.makeText(activity,"No Internet Connection!",Toast.LENGTH_SHORT).show()
         }
+
         //checking on click
         binding.swipeToRefresh.setOnRefreshListener {
             if(isOnline(requireActivity())){
-                getData(latitude,longitude)
+                getData(latitude!!.toDouble(),longitude!!.toDouble())
             }else{
                 Toast.makeText(activity,"No Internet Connection!",Toast.LENGTH_SHORT).show()
             }
@@ -226,8 +227,8 @@ class CurrentFragment : Fragment(R.layout.fragment_current) {
             //permission granted
             fusedLocationClient?.lastLocation?.addOnSuccessListener {it ->
                 it.let {
-                    longitude = it.longitude
-                    latitude = it.latitude
+                    longitude = it.longitude.toString()
+                    latitude = it.latitude.toString()
                     Log.d(Utils.TAG +"3",longitude.toString())
                     Log.d(Utils.TAG +"3",latitude.toString())
                     activity?.getSharedPreferences(SHARED, Context.MODE_PRIVATE)?.edit()?.apply{

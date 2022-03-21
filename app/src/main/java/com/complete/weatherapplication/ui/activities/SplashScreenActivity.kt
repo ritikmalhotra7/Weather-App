@@ -1,25 +1,24 @@
 package com.complete.weatherapplication.ui.activities
 
 import android.Manifest
+import android.R
 import android.app.Activity
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import com.complete.weatherapplication.utils.Utils.Companion.REQUEST_CODE
-import com.complete.weatherapplication.utils.Utils.Companion.SHARED
-import com.complete.weatherapplication.utils.Utils.Companion.TAG
+import coil.load
 import com.complete.weatherapplication.databinding.ActivitySplashScreenBinding
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.complete.weatherapplication.utils.Utils
+import com.complete.weatherapplication.utils.Utils.Companion.REQUEST_CODE
+import com.complete.weatherapplication.utils.Utils.Companion.TAG
+import com.complete.weatherapplication.utils.Utils.Companion.getCurrentLocation
+import pub.devrel.easypermissions.AfterPermissionGranted
+import pub.devrel.easypermissions.EasyPermissions
+import pub.devrel.easypermissions.PermissionRequest
 
 
 class SplashScreenActivity : Activity() {
@@ -30,25 +29,28 @@ class SplashScreenActivity : Activity() {
     val binding : ActivitySplashScreenBinding
     get() = _binding!!
 
-    private var fusedLocationClient: FusedLocationProviderClient? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //inflating the binding
         _binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding!!.root)
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        checkLocationPermission()
-        //setting shared prefs for location
-        getSharedPreferences(SHARED, Context.MODE_PRIVATE).edit().apply{
-            putString("longitude",longitude.toString())
-            putString("latitude",latitude.toString())
-            apply()
-        }
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
+        EasyPermissions.requestPermissions(this,"hello", REQUEST_CODE,Manifest.permission.ACCESS_FINE_LOCATION);
+        if(EasyPermissions.hasPermissions(this,Manifest.permission.ACCESS_FINE_LOCATION)){
+          /*  longitude = current.longitude
+            latitude = current.latitude
+            getSharedPreferences(Utils.SHARED, Context.MODE_PRIVATE).edit().apply{
+                putString("longitude",longitude.toString())
+                putString("latitude",latitude.toString())
+                apply()
+            }
+            Log.d(TAG,current.longitude.toString())*/
+        }else{
+            Toast.makeText(this,"App didn't get the permissions required",Toast.LENGTH_LONG).show()
+        }
         //taking delay to splash screen
         Handler().postDelayed({
             val intent = Intent(this, MainActivity::class.java)
@@ -56,7 +58,19 @@ class SplashScreenActivity : Activity() {
             finish()
         }, 1000)
     }
-    //checking the permissions for location
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        EasyPermissions.onRequestPermissionsResult(requestCode,permissions,grantResults,this)
+    }
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
+    }
+    /*//checking the permissions for location
     fun checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(
                 applicationContext,
@@ -70,7 +84,7 @@ class SplashScreenActivity : Activity() {
                     Manifest.permission.ACCESS_FINE_LOCATION
                 )
             ) {
-                /** Alert Dialogue Box to Ask the user for location permission  */
+                *//** Alert Dialogue Box to Ask the user for location permission  *//*
                 AlertDialog.Builder(this)
                     .setTitle("Required Location Permission")
                     .setMessage("Grant Permission To Use Current Location, Else default Location will be used")
@@ -109,9 +123,9 @@ class SplashScreenActivity : Activity() {
         }else{
             getCurrentLocation()
         }
-    }
+    }*/
     //getting the longitude and latitude
-    private fun getCurrentLocation() {
+   /* private fun getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -134,10 +148,7 @@ class SplashScreenActivity : Activity() {
                 }
             }
         }
-    }
+    }*/
     //null the binding
-    override fun onDestroy() {
-        _binding = null
-        super.onDestroy()
-    }
+
 }

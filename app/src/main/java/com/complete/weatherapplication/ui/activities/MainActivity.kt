@@ -12,42 +12,52 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 
 import androidx.core.content.ContextCompat
+import androidx.core.location.LocationManagerCompat.getCurrentLocation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.complete.weatherapplication.R
 import com.complete.weatherapplication.utils.Utils
 import com.complete.weatherapplication.utils.Utils.Companion.SHARED
 import com.complete.weatherapplication.databinding.ActivityMainBinding
+import com.complete.weatherapplication.utils.Utils.Companion.getCurrentLocation
+
 import com.google.android.gms.location.*
+import pub.devrel.easypermissions.EasyPermissions
 
 class MainActivity : AppCompatActivity() {
     private var _binding: ActivityMainBinding? = null
-    val binding : ActivityMainBinding get() = _binding!!
-    private var longitude: Double = 0.0
-    private var latitude: Double = 0.0
-
-    private var MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 1;
-    private var fusedLocationClient: FusedLocationProviderClient? = null
+    private val binding : ActivityMainBinding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //inflating the binding
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        //intialising fusedLocationClient
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        getCurrentLocation()
         //storing in shared prefs
         getSharedPreferences(SHARED,Context.MODE_PRIVATE).getString("name","Username")?.let {
         }
-
+        if(EasyPermissions.hasPermissions(this,Manifest.permission.ACCESS_FINE_LOCATION)){
+            var current = getCurrentLocation(this)
+            getSharedPreferences(Utils.SHARED, Context.MODE_PRIVATE).edit().apply{
+                putString("longitude",current.longitude.toString())
+                putString("latitude",current.latitude.toString())
+                apply()
+            }
+           Log.d(Utils.TAG+1,current.longitude.toString())
+        }else{
+            Toast.makeText(this,"App didn't get the permissions required",Toast.LENGTH_LONG).show()
+        }
         //intialising bottom navigation
         binding.bottomNavigationView.setupWithNavController(
             supportFragmentManager.findFragmentById(R.id.weatherFragment)!!.findNavController()
         )
     }
-    //checking the permissions for location
-    fun checkLocationPermission() {
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
+    }
+   /* //checking the permissions for location
+    private fun checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(
                 applicationContext,
                 android.Manifest.permission.ACCESS_FINE_LOCATION
@@ -61,7 +71,7 @@ class MainActivity : AppCompatActivity() {
                     android.Manifest.permission.ACCESS_FINE_LOCATION
                 )
             ) {
-                /** Alert Dialogue Box to Ask the user for location permission  */
+                *//** Alert Dialogue Box to Ask the user for location permission  *//*
                 AlertDialog.Builder(this)
                     .setTitle("Required Location Permission")
                     .setMessage("Grant Permission To Use Current Location, Else default Location will be used")
@@ -124,10 +134,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-    }
+    }*/
     //null the binding
-    override fun onDestroy() {
-        _binding = null
-        super.onDestroy()
-    }
+
 }
