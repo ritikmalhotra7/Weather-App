@@ -3,15 +3,16 @@ package com.complete.weatherapplication.ui
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.complete.weatherapplication.utils.Resources
-import kotlinx.coroutines.launch
-import retrofit2.Response
 import com.complete.weatherapplication.model.WeatherResponse
 import com.complete.weatherapplication.model2.WeatherReportResponse
 import com.complete.weatherapplication.model3.WeatherPastReponse
+import com.complete.weatherapplication.utils.Resources
+import kotlinx.coroutines.launch
+import retrofit2.Response
 
-class WeatherViewModel(val repo: WeatherRepository): ViewModel() {
-    var reportList:MutableLiveData<Resources<WeatherReportResponse>> = MutableLiveData()
+
+class WeatherViewModel constructor(val repo: WeatherRepository): ViewModel() {
+    var reportList: MutableLiveData<Resources<WeatherReportResponse>> = MutableLiveData()
     var search :MutableLiveData<Resources<WeatherResponse>> = MutableLiveData()
     var pastValues:MutableLiveData<Resources<WeatherPastReponse>> = MutableLiveData()
 
